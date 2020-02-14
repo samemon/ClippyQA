@@ -24,26 +24,26 @@ MODEL_NRE = 'wiki80_bert_softmax'
 def infer(model,text,pos_one_st,pos_one_end,
 		pos_two_st,pos_two_end):
 
-		"""
-		This function will be used to infer 
-		the relationship between two entities 
-		in text[pos_one_st:post_one_end] and 
-		text[pos_two_st:pos_two_end]
+	"""
+	This function will be used to infer 
+	the relationship between two entities 
+	in text[pos_one_st:post_one_end] and 
+	text[pos_two_st:pos_two_end]
 
-		Args:
-			model: the model for openNRE
-			text: Any line of text
-			pos_one_st: start index of first entitity
-			pos_one_end: end index of first entity
-			pos_two_st: start index of second entity
-			pos_two_end: end index of second entity
-		Returns: 
-			type of relationship (string) e.g. residence, or
-			headquarters location, etc.
+	Args:
+		model: the model for openNRE
+		text: Any line of text
+		pos_one_st: start index of first entitity
+		pos_one_end: end index of first entity
+		pos_two_st: start index of second entity
+		pos_two_end: end index of second entity
+	Returns: 
+		type of relationship (string) e.g. residence, or
+		headquarters location, etc.
 		"""
-		return model.infer({'text': text, 
-				'h': {'pos': (pos_one_st, pos_one_end)}, 
-				't': {'pos': (pos_two_st, pos_two_end)}})
+	return model.infer({'text': text, 
+			'h': {'pos': (pos_one_st, pos_one_end)}, 
+			't': {'pos': (pos_two_st, pos_two_end)}})
 
 def get_indices(text):
 	"""
