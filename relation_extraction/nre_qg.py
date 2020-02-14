@@ -105,7 +105,8 @@ if __name__ == "__main__":
 	indices = get_indices(text)
 	tokens = text.split()
 	cachedStopWords = stopwords.words("english")
-	all_pairs = [list(map(tuple, comb)) for comb in combinations(indices, 2)]
+	all_pairs = [list(map(tuple, comb)) 
+		for comb in combinations(indices, 2)]
 
 	# Let us now get all the relations
 	for i, j in all_pairs:
