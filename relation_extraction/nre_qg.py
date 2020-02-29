@@ -20,8 +20,9 @@ from itertools import combinations
 
 MODEL_NRE = 'wiki80_bert_softmax'
 
+model = opennre.get_model(MODEL_NRE)
 
-def infer(model,text,pos_one_st,pos_one_end,
+def infer(text,pos_one_st,pos_one_end,
 		pos_two_st,pos_two_end):
 
 	"""
@@ -31,7 +32,6 @@ def infer(model,text,pos_one_st,pos_one_end,
 	text[pos_two_st:pos_two_end]
 
 	Args:
-		model: the model for openNRE
 		text: Any line of text
 		pos_one_st: start index of first entitity
 		pos_one_end: end index of first entity
@@ -68,31 +68,6 @@ def get_indices(text):
 	spans = [span for span in span_generator]
 	return spans
 
-def create_question(entity1, entity2, relationship):
-	"""
-	This function will take in two entities and 
-	create a rule based question based on the inferred 
-	relationship between them
-	Args:
-		- entity1: string 
-		- entity2: string
-		- relationship: one of the 80 relationships
-	"""
-
-	if(relationship == 'residence'):
-		return "Question: Where does "+entity1+" live?: "+entity2
-
-	elif(relationship == 'work location'):
-		return  "Question: Where does "+entity1+ " work?: "+entity2
-
-	elif(relationship ==  'occupation'):
-		return "Question: What does "+entity1+ " do?: "+entity2
-
-	else:
-		return "Question Rule not specified for the relationship"
-
-
-
 if __name__ == "__main__":
 	argv = sys.argv[1:]
 	if(len(argv) != 1):
@@ -115,7 +90,7 @@ if __name__ == "__main__":
 			token2 = text[j[0]:j[1]]
 			if(not(token1 in cachedStopWords) and \
 					not(token2 in cachedStopWords)):
-				r = infer(model,text,i[0],i[1],j[0],j[1])
+				r = infer(text,i[0],i[1],j[0],j[1])
 				if(r[1] > 0.8):
 					print("relation between (",token1,") and (",\
 							token2, ") is: ", r[0], " with prob ",

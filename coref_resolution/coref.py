@@ -1,7 +1,7 @@
 import spacy
 import neuralcoref
 
-nlp = spacy.load('en')
+nlp = spacy.load('en_core_web_sm')
 neuralcoref.add_to_pipe(nlp)
 
 
@@ -17,7 +17,7 @@ def resolve_corefs(text):
             for text in l:
                 tokens_combined+=str(text) + ' '
             words_in_cluster.append(tokens_combined.strip())
-    text_revised = text_revised.replace(words_in_cluster[1],words_in_cluster[0])
+        text_revised = text_revised.replace(words_in_cluster[1],words_in_cluster[0])
     return text_revised
 
 
