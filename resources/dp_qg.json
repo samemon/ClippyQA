@@ -1,0 +1,122 @@
+{
+	"PERSON":
+		{
+			"pattern": "Who does SUBJECT VERB?: OBJECT",
+			"quality" : 0.5
+		},
+
+	"NORP":
+		{
+			"pattern": "Where does SUBJECT VERB?: OBJECT",
+			"quality" : 0.5
+		},
+
+
+	"FAC":
+		{
+			"pattern": "Where does SUBJECT VERB?: OBJECT",
+			"quality" : 0.5
+		},
+
+
+	"ORG":
+		{
+			"pattern": "Where does SUBJECT VERB?: OBJECT",
+			"quality" : 0.5
+		},
+
+
+	"GPE":
+		{
+			"pattern": "Where does SUBJECT VERB?: OBJECT",
+			"quality" : 0.5
+		},
+
+	"LOC":
+		{
+			"pattern": "Where does SUBJECT VERB?: OBJECT",
+			"quality" : 0.5
+		},
+
+	"PRODUCT":
+		{
+			"pattern": "What does SUBJECT VERB?: OBJECT",
+			"quality" : 0.5
+		},
+
+	"EVENT":
+		{
+			"pattern": "When does SUBJECT VERB?: OBJECT",
+			"quality" : 0.5
+		},
+
+
+	"WORK_OF_ART":
+		{
+			"pattern": "What does SUBJECT VERB?: OBJECT",
+			"quality" : 0.5
+		},
+
+
+	"LAW":
+		{
+			"pattern": "What does SUBJECT VERB?: OBJECT",
+			"quality" : 0.5
+		},
+
+
+	"LANGUAGE":
+		{
+			"pattern": "What does SUBJECT VERB?: OBJECT",
+			"quality" : 0.5
+		},
+
+
+	"DATE":
+		{
+			"pattern": "When does SUBJECT VERB?: OBJECT",
+			"quality" : 0.5
+		},
+
+
+	"TIME":
+		{
+			"pattern": "When does SUBJECT VERB?: OBJECT",
+			"quality" : 0.5
+		},
+
+
+	"PERCENT":
+		{
+			"pattern": "How much does SUBJECT VERB?: OBJECT",
+			"quality" : 0.5
+		},
+
+
+	"MONEY":
+		{
+			"pattern": "How much does SUBJECT VERB?: OBJECT",
+			"quality" : 0.5
+		},
+
+
+	"QUANTITY":
+		{
+			"pattern": "How much does SUBJECT VERB?: OBJECT",
+			"quality" : 0.5
+		},
+
+	"ORDINAL":
+		{
+			"pattern": "How much does SUBJECT VERB?: OBJECT",
+			"quality" : 0.5
+		},
+
+
+	"CARDINAL":
+		{
+			"pattern": "How much does SUBJECT VERB?: OBJECT",
+			"quality" : 0.5
+		}
+
+}

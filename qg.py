@@ -1,147 +1,225 @@
 import sys
 import heapq
+import json
+import re
 
 from coref_resolution import coref
 from ne_extraction import ner
 from relation_extraction import nre_qg
+from dependency_parsing import dp
+
+
+
+RE_QG_JSON = open("resources/re_qg.json","r").read()
+RE_RULES = json.loads(RE_QG_JSON)
+
+DP_QG_JSON = open("resources/dp_qg.json","r").read()
+DP_RULES = json.loads(DP_QG_JSON)
+
 
 class Relationship:
-	def __init__(self, e1, e2, r):
-		self.entity1 = e1
-		self.entity2 = e2
-		self.relation = r
+	def __init__(self, _entity1, _entity2, _kind, _score):
+		"""
+		self.entity1 : Named Entity (typically subject in relation)
+		self.entity2 : Named Entity (typicall object in relation)
+		self.kind 	 : string (must exist in RE_QG_JSON)
+		self.score   : float (must be normalized)
+ 		"""
+		self.entity1 = _entity1 		
+		self.entity2 = _entity2  		
+		self.kind = _kind       		
+		self.score = _score				
 
-class Named_Entity:
-	def __init__(self, text, start_char, end_char, _label):
-		self.text = text
-		self.start_char = start_char
-		self.end_char = end_char
-		self._label = _label
+	def __eq__(self, other):
+		"""
+		We define an equivalence class of all relations based on
+		relationship's subject entity and its kind
+		"""
+		return self.kind==other.kind \
+		   and (self.entity1.text==other.entity1.text \
+			    or self.entity2.text==self.entity2.text)
 
-class Question:
+	def __hash__(self):
+		return hash((self.entity1.text,self.kind))
+
+
+
+class Question: 
 	def __init__(self, text, score):
-		self.text = text
-		self.score = score
+		"""
+		self.text  : string 
+			this is the question text
+		self.score : float 
+			normalized from 0.00 +1.00
+		"""
+		self.text = text				
+		self.score = score 				
 
 	def __lt__(self, other):
-		return (self.score<other.score)
+		"""
+		We will use scores across questions of all kinds 
+		for comparison and ranking
+		"""
+		return (self.score<other.score) 
 
-def relation_qg(entity1, entity2, relation):
+	def __eq__(self, other):
+		return self.text==other.text
 
-	kind = relation[0]
-	score = relation[1]
-	question = ""
+	def __hash__(self):
+		return hash(self.text)
 
-	if(entity1.text==entity2.text):
-		score = 0.01
 
-	if(kind == 'residence'):
-		if(entity1._label!='PERSON' or (entity2._label not in ['LOC','GPE'])):
-			score = 0.01
-		question ="Question: Where does "+entity1.text+" live?: "+entity2.text
 
-	elif(kind == 'work location'):
-		if(entity1._label!='PERSON' or (entity2._label not in ['ORG','GPE','LOC','FAC'])):
-			score = 0.01
-		question = "Question: Where does "+entity1.text+ " work?: "+ entity2.text
 
-	elif(kind == 'occupation'):
-		if(entity1._label!='PERSON'):
-			score = 0.01
-		question = "Question: What does "+ entity1.text + " do?: "+entity2.text
 
-	elif(kind == 'sibling'):
-		if(entity1._label!='PERSON' or entity2._label!='PERSON'):
-			score = 0.01
-		question = "Question: Who is "+entity1.text+ " related to?: "+entity2.text
 
-	elif(kind == 'headquarters location'):
-		print(entity1._label, entity2._label)
-		if(entity1._label not in ['LOC','FAC','ORG'] or entity2._label not in ['GPE','LOC']):
-			score = 0.01
-		question = "Question: Where is "+entity1.text+ " located?: "+entity2.text
 
-	elif(kind == 'publisher'):
-		question = "Question: Who is "+entity1.text+ "'s publisher?: "+entity2.text
 
-	elif(kind == 'notable work'):
-		question = "What is a notable work of "+entity1.text+ "?: "+entity2.text
+"""_______________________________RELATION BASED QG________________________________"""
 
-	elif(kind == 'has part'):
-		if(entity2._label=='PERSON'):
-			score = 0.01
-		question = "Question: " + entity2.text + " had a part in which work?: " + entity1.text
 
-	elif(kind == 'characters'):
-		score = 0.01
-		question = "What were " + entity2.text + " and " + entity1.text + "?: characters"
+def relationship_to_question(relationship):
+	"""
+	Takes a discovered relationship and uses the set of rules for relationship 
+	based questions in "resources/re_qg.json" to generate a 
+	Question along with its score
 
-	elif(kind == 'owned by'):
-		if(entity1._label not in ['GPE','FAC','ORG']):
-			score = 0.01
-		question = "Question: Who is "+entity1.text+ " owned by?: "+entity2.text
+	INPUT:  Relationship
+	OUTPUT: Question
+	"""
+	if(relationship.kind not in RE_RULES.keys()):
+		return Question("No question found.", 0.0)
+	pattern = RE_RULES[relationship.kind]["pattern"]
+	question = pattern.replace('entity1',relationship.entity1.name)
+	question = question.replace('entity2',relationship.entity2.name)
+	score = relationship.score*RE_RULES[relationship.kind]["quality"]
 
-	elif(kind == 'follows'):
-		score = 0.01
-		question = "Question: Who or what does " + entity2.text + " follow?: "+entity1.text
+	if(relationship.entity1.label not in \
+		RE_RULES[relationship.kind]["entity1_labels"]):
+		score /= 2
+	if(relationship.entity2.label not in \
+		RE_RULES[relationship.kind]["entity2_labels"]):
+		score /= 2
+	if(relationship.entity1.name==relationship.entity2.name):
+		score /= 2
 
-	elif(kind == 'followed by'):
-		score = 0.01
-		question = "Question: Who or what does " + entity1.text + " follow?: "+entity2.text
+	return Question(question, round(score,2))
 
-	elif(kind == 'part of'):
-		question = "Question: What is " + entity1.text + " part of?: "+entity2.text
 
-	else:
-		question = "Could not generate question for " + kind + ". "
 
-	return Question(question, score)
+def get_relationships(text,entities):
+	"""
+	Takes a list of named entities and returns all 
+	detected relationships amongst them
+
+	INPUT: List<Named_Entity>
+	OUTPUT: List<Relationship>
+	"""
+
+	relationships = dict()
+	ne_count = len(entities)
+	for entity1 in entities:
+		print("checking "+entity1.name+" for relationships...")
+		for entity2 in entities:
+			if((entity1.name,entity2.name) in relationships):
+				continue
+			(_kind, _score) = nre_qg.infer(text, entity1.start_char \
+							, entity1.end_char, entity2.start_char \
+							, entity2.end_char)
+			relationships[(entity1.name,entity2.name)] = \
+						Relationship(entity1, entity2, _kind, _score) 
+
+	return relationships.values()
+"""___________________________________________________________________________________"""
+
+
+
+
+
+
+
+
+
+
+"""_______________________________DEPENDENCY BASED QG________________________________"""
+
+
+def dependency_to_question(entities):
+	def to_question(dependency):
+		if(None in [dependency.verb, dependency.subject, dependency.object]):
+			return Question("No question found",0.0)
+
+		obj_ent = entities[dependency.object.text]
+		if(obj_ent.exists):
+			pattern = DP_RULES[obj_ent.label]["pattern"]
+			quality = DP_RULES[obj_ent.label]["quality"]
+			question_text = pattern.replace('SUBJECT',dependency.subject.text)
+			question_text = question_text.replace('OBJECT',dependency.object.text)
+			question_text = question_text.replace('VERB',dependency.verb.lemma_)
+			return Question(question_text,0.5)
+		else:
+			return Question("No question found.",0.0)
+	return to_question
+
+
+"""___________________________________________________________________________________"""
+
+
+
+
+
+
+
+
+
+
 
 def main(_filepath, _N):
 	f = open(_filepath, "r")
 	text = f.read()
 
 	text = coref.resolve_corefs(text)
-	entities = ner.extract_ne(text)
-	ne_count = len(entities)
-	print(str(ne_count)+" named entities detected")
 
-	relationship_data = []
-	for i in range(ne_count):
-		print("checking "+entities[i].text+" for relationships...")
-		for j in range(i, ne_count):
-			if(i==j):
-				continue
-			entity1 = Named_Entity(entities[i].text, entities[i].start_char, entities[i].end_char, entities[i].label_)
-			entity2 = Named_Entity(entities[j].text, entities[j].start_char, entities[j].end_char, entities[j].label_)
+	named_entities = ner.extract_ne(text)
 
-			relation = nre_qg.infer(text, entity1.start_char, entity1.end_char, entity2.start_char, entity2.end_char)
-			relationship_data.append( Relationship(entity1, entity2, relation) )
+	relationships = get_relationships(text,named_entities.values())
+	relationship_questions = set(map(relationship_to_question, relationships))
 
-	relation_questions =[]
-	for rd in relationship_data:
-		rd_question = relation_qg(rd.entity1, rd.entity2, rd.relation)
-		relation_questions.append(rd_question)
+	dependencies = dp.get_dependencies(text)
+	dependency_questions = list(map(dependency_to_question(named_entities),dependencies)) 
 
+	questions = set()
+	questions.update(relationship_questions)
+	questions.update(dependency_questions)
 
-	questions = []
-	questions += relation_questions
-	#TODO: Dependency parsing score
-
-	print(str(len(questions))+" questions generated.")
-
-	heapq.heapify(questions)
+	heapq.heapify(list(questions))
 	top_questions = heapq.nlargest(int(_N), questions)
 
-	for q in top_questions:
-		print(q.text, q.score)
+	for q in top_questions: print(q.text, q.score)
 
 	return
 
+
+
+
+
+
+
+
+
+
+
+
+"""____________________________________CLI USAGE______________________________________"""
+
 if __name__ == "__main__":
 	argv = sys.argv[1:]
-	if(len(argv) != 2):
+	if(len(argv)!=2):
 		print("Usage: <text you want to generate questions from> <number of questions> ")
 		sys.exit()
-
 	main(argv[0], argv[1])
+"""________________________________________________________________________"""
+
+
+
+
