@@ -1,0 +1,6 @@
+Is this a sample question?
+How many questions are in this sample document?
+What is the average line length in this sample document?
+Can our code handle the non-ASCII question below?
+我想去看Rise Of Skywalker，你想跟我去吗？
+Did it handle that successfully?

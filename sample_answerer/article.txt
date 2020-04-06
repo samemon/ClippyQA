@@ -1,0 +1,9 @@
+We need to test that our code works on both ASCII and non-ASCII characters. Therefore I made this sample text which includes some ASCII sentences, some non-ASCII sentences, and some with a mix of both. All are in UTF-8 encoding. Here's a line break, make sure that's handled properly.
+This sentence is written entirely in english letters, and warns you there's a double linebreak ahead.
+
+This sentence has an interjection 真的吗 in non-english letters. 啊，哥哥，你好。今天我没吃午饭，因为欺负偷我的钱。你有饭吗？This is a sentence after the above non-english letters, to test whether we can detect the non-ASCII punctuation at the end of the above line. If not, sentences may run together. Just for fun, here's multiple linebreaks.
+
+
+
+
+This concludes the sample article text. Good day!
