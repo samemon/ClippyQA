@@ -2,19 +2,28 @@ import sys
 import heapq
 import json
 import re
+import random
 
-from coref_resolution import coref
+#from coref_resolution import coref
 from ne_extraction import ner
 from relation_extraction import nre_qg
 from dependency_parsing import dp
 
 
-
+#Stores wh- and binary patterns for relation-based questions
 RE_QG_JSON = open("resources/re_qg.json","r").read()
 RE_RULES = json.loads(RE_QG_JSON)
 
+#Stores patterns for dependency-parse based questions
 DP_QG_JSON = open("resources/dp_qg.json","r").read()
 DP_RULES = json.loads(DP_QG_JSON)
+
+#Controls how far RE goes to detect relationships for each named entity
+#Increasing may lead to more relationships at the cost of increased runtime 
+RE_GRANULARITY = 5
+
+#What portion of the generated questions should be binary?
+BINARY_RATIO = 2/7
 
 
 class Relationship:
@@ -41,6 +50,7 @@ class Relationship:
 
 	def __hash__(self):
 		return hash((self.entity1.text,self.kind))
+
 
 
 
@@ -89,10 +99,17 @@ def relationship_to_question(relationship):
 	"""
 	if(relationship.kind not in RE_RULES.keys()):
 		return Question("No question found.", 0.0)
-	pattern = RE_RULES[relationship.kind]["pattern"]
+
+	pattern = ""
+	if(random.randrange(0,10,1)<(BINARY_RATIO*10)):
+		pattern = RE_RULES[relationship.kind]["binary"]
+	else:
+		pattern = RE_RULES[relationship.kind]["pattern"]
+
 	question = pattern.replace('entity1',relationship.entity1.name)
 	question = question.replace('entity2',relationship.entity2.name)
 	score = relationship.score*RE_RULES[relationship.kind]["quality"]
+
 
 	if(relationship.entity1.label not in \
 		RE_RULES[relationship.kind]["entity1_labels"]):
@@ -115,12 +132,14 @@ def get_relationships(text,entities):
 	INPUT: List<Named_Entity>
 	OUTPUT: List<Relationship>
 	"""
-
 	relationships = dict()
 	ne_count = len(entities)
-	for entity1 in entities:
-		print("checking "+entity1.name+" for relationships...")
-		for entity2 in entities:
+	for i in range(ne_count):
+		entity1 = entities[i]
+		###print("checking "+entity1.name+" for relationships...")
+
+		for j in range(max(0, i-RE_GRANULARITY),min(ne_count,i+RE_GRANULARITY)):
+			entity2 = entities[j]
 			if((entity1.name,entity2.name) in relationships):
 				continue
 			(_kind, _score) = nre_qg.infer(text, entity1.start_char \
@@ -145,17 +164,45 @@ def get_relationships(text,entities):
 
 
 def dependency_to_question(entities):
+	"""
+	CURRIED FUNCTION
+	Calling dependency_to_question returns a method that turns dependency-parse
+	data into questions only for a specified set of entities
+	"""
+
+	def children_to_text(children):
+		"""
+		Used to turn child objects to clauses from dependency-parse objects
+		"""
+		n = len(children)
+		if(len(children)==0): 
+			return ""
+		clause = ""
+		for i in range(n-1):
+			clause += children[i].text + " "
+		return clause + children[n-1].text
+
 	def to_question(dependency):
+		"""
+		dependency_to_question returns this function staged with entities
+		"""
 		if(None in [dependency.verb, dependency.subject, dependency.object]):
 			return Question("No question found",0.0)
 
 		obj_ent = entities[dependency.object.text]
 		if(obj_ent.exists):
+			full_subject_text = children_to_text(list(dependency.subject.children)) \
+							  + dependency.subject.text 
+			full_object_text = children_to_text(list(dependency.object.children)) \
+							 + dependency.object.text 
+			full_verb_text = dependency.verb.lemma_ \
+						   + children_to_text(list(dependency.verb.children)[1:])
+
 			pattern = DP_RULES[obj_ent.label]["pattern"]
 			quality = DP_RULES[obj_ent.label]["quality"]
-			question_text = pattern.replace('SUBJECT',dependency.subject.text)
-			question_text = question_text.replace('OBJECT',dependency.object.text)
-			question_text = question_text.replace('VERB',dependency.verb.lemma_)
+			question_text = pattern.replace('SUBJECT',full_subject_text)
+			question_text = question_text.replace('OBJECT', full_object_text)
+			question_text = question_text.replace('VERB',full_verb_text)
 			return Question(question_text,0.5)
 		else:
 			return Question("No question found.",0.0)
@@ -178,24 +225,25 @@ def main(_filepath, _N):
 	f = open(_filepath, "r")
 	text = f.read()
 
-	text = coref.resolve_corefs(text)
+	#text = coref.resolve_corefs(text)
 
 	named_entities = ner.extract_ne(text)
+	sorted_entities = sorted(list(named_entities.values()),key=ner.get_key)
 
-	relationships = get_relationships(text,named_entities.values())
+	relationships = get_relationships(text,sorted_entities)
 	relationship_questions = set(map(relationship_to_question, relationships))
 
-	dependencies = dp.get_dependencies(text)
-	dependency_questions = list(map(dependency_to_question(named_entities),dependencies)) 
+	#dependencies = dp.get_dependencies(text)
+	#dependency_questions = list(map(dependency_to_question(named_entities),dependencies)) 
 
 	questions = set()
 	questions.update(relationship_questions)
-	questions.update(dependency_questions)
+	#questions.update(dependency_questions)
 
 	heapq.heapify(list(questions))
 	top_questions = heapq.nlargest(int(_N), questions)
 
-	for q in top_questions: print(q.text, q.score)
+	for q in top_questions: print(q.text)
 
 	return
 

@@ -1,1 +1,1 @@
-John Smith lives in Pittsburgh. His wife Sarah and his son Bill live with him. John owns stocks at Apple Inc, where he works as a data scientist. In his free time, John likes to go fishing with his brother, Steve. 
+John Smith resides in Pittsburgh. His wife Sarah and his son Bill live with him. John owns stocks at Apple Inc, where he works as a data scientist. In his free time, John likes to go fishing with his brother, Steve. 

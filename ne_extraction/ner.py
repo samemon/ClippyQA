@@ -54,3 +54,8 @@ def extract_ne(text):
 
 	return named_entity_dict
 
+def get_key(named_entity):
+	return named_entity.start_char
+
+
+

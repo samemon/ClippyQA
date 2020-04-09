@@ -1,7 +1,8 @@
 {
 	"residence":
 		{
-			"pattern": "Where does entity1 live?: entity2",
+			"pattern": "Where does entity1 live?",
+			"binary": "Does entity1 live in entity2?: Yes",
 			"entity1_labels" : "['PERSON']",
 			"entity2_labels" : "['LOC','GPE','FAC']",
 			"quality" : 0.5
@@ -9,7 +10,8 @@
 
 	"spouse":
 		{
-			"pattern": "Who is entity1 married to?: entity2",
+			"pattern": "Who is entity1 married to?",
+			"binary": "Is entity1 married to entity2?",
 			"entity1_labels" : "['PERSON']",
 			"entity2_labels" : "['PERSON']",
 			"quality" : 0.5
@@ -18,7 +20,8 @@
 
 	"work location":
 		{
-			"pattern": "Where does entity1 work?: entity2",
+			"pattern": "Where does entity1 work?",
+			"binary": "Does entity1 work in entity2?",
 			"entity1_labels" : "['PERSON']",
 			"entity2_labels" : "['LOC','GPE','FAC','NORP,ORG']",
 			"quality" : 0.5
@@ -27,7 +30,8 @@
 
 	"occupation":
 		{
-			"pattern": "What does entity1 do?: entity2",
+			"pattern": "What does entity1 do?",
+			"binary": "Has entity1 ever done entity2?",
 			"entity1_labels" : "['PERSON']",
 			"entity2_labels" : "['LOC','GPE','FAC','WORK_OF_ART']",
 			"quality" : 0.5
@@ -36,7 +40,8 @@
 
 	"sibling":
 		{
-			"pattern": "Who is entity1 related to?: entity2",
+			"pattern": "Who is entity1 related to?",
+			"binary": "Are entity1 and entity2 related?",
 			"entity1_labels" : "['PERSON']",
 			"entity2_labels" : "['PERSON']",
 			"quality" : 0.25
@@ -44,7 +49,8 @@
 
 	"child":
 		{
-			"pattern": "Who is a parent of entity1?: entity2",
+			"pattern": "Who is a parent of entity1?",
+			"binary": "Is entity2 a parent of entity1?",
 			"entity1_labels" : "['PERSON']",
 			"entity2_labels" : "['PERSON']",
 			"quality" : 0.25
@@ -52,7 +58,8 @@
 
 	"father":
 		{
-			"pattern": "Who is entity1's father?: entity2",
+			"pattern": "Who is entity1's father?",
+			"binary": "Is entity2 the father of entity1?",
 			"entity1_labels" : "['PERSON']",
 			"entity2_labels" : "['PERSON']",
 			"quality" : 0.75
@@ -60,7 +67,8 @@
 
 	"mother":
 		{
-			"pattern": "Who is entity1's mother?: entity2",
+			"pattern": "Who is entity1's mother?",
+			"binary": "Is entity2 the mother of entity1?",
 			"entity1_labels" : "['PERSON']",
 			"entity2_labels" : "['PERSON']",
 			"quality" : 0.75
@@ -69,7 +77,8 @@
 
 	"headquarters location":
 		{
-			"pattern": "Where is entity2 located?: entity1",
+			"pattern": "Where is entity2 located?",
+			"binary": "Is entity2 located in entity1?",
 			"entity1_labels" : "['ORG, 'GPE', 'NORP', 'FAC']",
 			"entity2_labels" : "['GPE','FAC']",
 			"quality" : 0.5
@@ -78,7 +87,8 @@
 
 	"publisher":
 		{
-			"pattern": "Who is the publisher for entity1?: entity2",
+			"pattern": "Who is the publisher for entity1?",
+			"binary": "Has entity2 ever published entity1?",
 			"entity1_labels" : "['PERSON','NORP','GPE','ORG','WORK_OF_ART','LAW']",
 			"entity2_labels" : "['PERSON','NORP','ORG']",
 			"quality" : 0.5
@@ -87,7 +97,8 @@
 
 	"notable work":
 		{
-			"pattern": "What work is entity1 noted for?: entity2",
+			"pattern": "What work is entity1 noted for?",
+			"binary": "Is entity1 known for entity2?",
 			"entity1_labels" : "['PERSON','FAC','ORG','GPE','WORK_OF_ART','NORP']",
 			"entity2_labels" : "['ORG','WORK_OF_ART','NORP']",
 			"quality" : 0.5
@@ -96,7 +107,8 @@
 
 	"has part":
 		{
-			"pattern": "Who has a part in entity2?: entity1",
+			"pattern": "Who has a part in entity2?",
+			"binary": "Does entity1 have a part in entity2?",
 			"entity1_labels" : "['NORP','PRODUCT','EVENT','WORK_OF_ART','ORG']",
 			"entity2_labels" : "['PERSON','ORG','GPE','NORP']",
 			"quality" : 0.25
@@ -105,7 +117,8 @@
 
 	"characters":
 		{
-			"pattern": "Which character does entity1 appear with?: entity2",
+			"pattern": "Which character does entity1 appear with?",
+			"binary": "Has entity2 ever appeared with entity1?",
 			"entity1_labels" : "['PERSON']",
 			"entity2_labels" : "['PERSON']",
 			"quality" : 0.25
@@ -115,7 +128,8 @@
 
 	"owned by":
 		{
-			"pattern": "Who is entity1 owned by?: entity2",
+			"pattern": "Who is entity1 owned by?",
+			"binary": "Does entity2 own entity1?",
 			"entity1_labels" : "['ORG','FAC','WORK_OF_ART','MONEY','NORP']",
 			"entity2_labels" : "['PERSON', 'ORG','GPE']",
 			"quality" : 0.5
@@ -124,7 +138,8 @@
 
 	"follows":
 		{
-			"pattern": "Who does entity1 follow?: entity2",
+			"pattern": "Who does entity1 follow?",
+			"binary": "Is entity1 a follower of entity2?",
 			"entity1_labels" : "['PERSON','NORP']",
 			"entity2_labels" : "['PERSON','GPE','ORG']",
 			"quality" : 0.25
@@ -133,7 +148,8 @@
 
 	"followed by":
 		{
-			"pattern": "Who is a follower of entity1?: entity2",
+			"pattern": "Who is a follower of entity1?",
+			"binary": "Is entity2 a follower of entity1?",
 			"entity1_labels" : "['PERSON','NORP']",
 			"entity2_labels" : "['PERSON']",
 			"quality" : 0.25
@@ -141,7 +157,8 @@
 
 	"said to be the same as":
 		{
-			"pattern" : "What is entity1 said to be the same as?: entity2",
+			"pattern" : "What is entity1 said to be the same as?",
+			"binary": "Is entity1 be said to be the same as entity2?",
 			"entity1_labels" : "['PERSON','LOC','GPE','NORP','WORK_OF_ART','FAC']",
 			"entity2_labels" : "['PERSON','LOC','GPE','NORP','WORK_OF_ART','FAC']",
 			"quality" : 0.5
@@ -151,6 +168,7 @@
 	"part of":
 		{
 			"pattern": "What is entity2 a part of?: entity1",
+			"binary": "Is entity2 a part of entity1?",
 			"entity1_labels" : "['PERSON']",
 			"entity2_labels" : "['ORG','GPE','WORK_OF_ART']",
 			"quality" : 0.5
