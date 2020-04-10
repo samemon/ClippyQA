@@ -237,8 +237,8 @@ def main(_filepath, _N):
 			question = relationship_to_question(best_relationship)
 			if(question.score>0.0):
 				print(relationship_to_question(best_relationship).text)
+				question_count+=1
 
-		question_count+=1
 	return
 
 
