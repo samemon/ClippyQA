@@ -20,7 +20,7 @@ DP_RULES = json.loads(DP_QG_JSON)
 
 #Controls how far RE goes to detect relationships for each named entity
 #Increasing may lead to more relationships at the cost of increased runtime 
-RE_GRANULARITY = 5
+RE_GRANULARITY = 10
 
 #What portion of the generated questions should be binary?
 BINARY_RATIO = 2/7
@@ -113,42 +113,15 @@ def relationship_to_question(relationship):
 
 	if(relationship.entity1.label not in \
 		RE_RULES[relationship.kind]["entity1_labels"]):
-		score /= 2
+		score = 0.0
 	if(relationship.entity2.label not in \
 		RE_RULES[relationship.kind]["entity2_labels"]):
-		score /= 2
+		score = 0.0
 	if(relationship.entity1.name==relationship.entity2.name):
-		score /= 2
+		score = 0.0
 
 	return Question(question, round(score,2))
 
-
-
-def get_relationships(text,entities):
-	"""
-	Takes a list of named entities and returns all 
-	detected relationships amongst them
-
-	INPUT: List<Named_Entity>
-	OUTPUT: List<Relationship>
-	"""
-	relationships = dict()
-	ne_count = len(entities)
-	for i in range(ne_count):
-		entity1 = entities[i]
-		###print("checking "+entity1.name+" for relationships...")
-
-		for j in range(max(0, i-RE_GRANULARITY),min(ne_count,i+RE_GRANULARITY)):
-			entity2 = entities[j]
-			if((entity1.name,entity2.name) in relationships):
-				continue
-			(_kind, _score) = nre_qg.infer(text, entity1.start_char \
-							, entity1.end_char, entity2.start_char \
-							, entity2.end_char)
-			relationships[(entity1.name,entity2.name)] = \
-						Relationship(entity1, entity2, _kind, _score) 
-
-	return relationships.values()
 """___________________________________________________________________________________"""
 
 
@@ -225,26 +198,47 @@ def main(_filepath, _N):
 	f = open(_filepath, "r")
 	text = f.read()
 
-	#text = coref.resolve_corefs(text)
+	entities = ner.extract_ne(text)
+	entities = sorted(list(entities.values()),key=ner.get_key)
 
-	named_entities = ner.extract_ne(text)
-	sorted_entities = sorted(list(named_entities.values()),key=ner.get_key)
+	ne_count = len(entities)
+	question_limit = int(_N)
 
-	relationships = get_relationships(text,sorted_entities)
-	relationship_questions = set(map(relationship_to_question, relationships))
+	question_topics = set()
+	question_count = 0
 
-	#dependencies = dp.get_dependencies(text)
-	#dependency_questions = list(map(dependency_to_question(named_entities),dependencies)) 
+	for i in range(ne_count):
+		entity1 = entities[i]
+		best_relationship = Relationship(None,None,"NO TYPE",0.0)
 
-	questions = set()
-	questions.update(relationship_questions)
-	#questions.update(dependency_questions)
+		for j in range(max(0,i-RE_GRANULARITY), min(ne_count,i+RE_GRANULARITY)):
+			entity2 = entities[j]
 
-	heapq.heapify(list(questions))
-	top_questions = heapq.nlargest(int(_N), questions)
+			if(question_count>question_limit):
+				break
 
-	for q in top_questions: print(q.text)
+			if((entity1.name, entity2.name) in question_topics):
+				continue
 
+			if((entity2.name,entity1.name) in question_topics):
+				continue 
+
+			if(entity1.name==entity2.name):
+				continue
+
+			question_topics.add((entity1,entity2))
+			(_kind, _score) = nre_qg.infer(text, entity1.start_char \
+							, entity1.end_char, entity2.start_char \
+							, entity2.end_char)
+			if(_score>best_relationship.score):
+				best_relationship = Relationship(entity1,entity2,_kind,_score)
+		
+		if(best_relationship.score>0.0):
+			question = relationship_to_question(best_relationship)
+			if(question.score>0.0):
+				print(relationship_to_question(best_relationship).text)
+
+		question_count+=1
 	return
 
 

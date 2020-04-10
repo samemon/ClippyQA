@@ -19,7 +19,7 @@ DP_RULES = json.loads(DP_QG_JSON)
 
 #Controls how far RE goes to detect relationships for each named entity
 #Increasing may lead to more relationships at the cost of increased runtime 
-RE_GRANULARITY = 5
+RE_GRANULARITY = 10
 
 
 
@@ -88,23 +88,31 @@ class Question:
 
 
 
-def get_relationships(text,entities):
+def get_relationships(text,local_entities,global_entities):
 	"""
 	Takes a list of named entities and returns all 
 	detected relationships amongst them
 
-	INPUT: List<Named_Entity>
+	INPUT: String, List<Named_Entity>, List<Named_Entity>
 	OUTPUT: Dict<(Named_Entity,Named_Entity), Relationship>
 	"""
 
 	relationships = dict()
-	ne_count = len(entities)
-	for i in range(ne_count):
-		entity1 = entities[i]
-		###print("checking "+entity1.name+" for relationships...")
 
-		for j in range(max(0, i-RE_GRANULARITY),min(ne_count,i+RE_GRANULARITY)):
-			entity2 = entities[j]
+	local_count = len(local_entities)
+	global_count = len(global_entities)
+
+	entity_dict= dict()
+	for i in range(global_count):
+		entity_dict[global_entities[i].name] = i
+
+	for entity1 in local_entities:
+		if(entity1.name not in entity_dict.keys()):
+			continue
+
+		index = entity_dict[entity1.name]
+		for j in range(max(0,index-RE_GRANULARITY),min(global_count,index+RE_GRANULARITY)):
+			entity2 = global_entities[j]
 			if((entity1.name,entity2.name) in relationships):
 				continue
 			(_kind, _score) = nre_qg.infer(text, entity1.start_char \
@@ -172,53 +180,50 @@ def answer_questions(article_text, questions):
 	###article_text = coref.resolve_corefs(article_text)
 
 	#Build up knowledge base from document
-	named_entities = ner.extract_ne(article_text)
-	relationships = get_relationships(article_text,list(named_entities.values()))
-	relation_info = get_relation_info(relationships)
+	article_entities = list(ner.extract_ne(article_text).values())
+	article_entities = sorted(article_entities,key=ner.get_key)
 
 	answers = []
 	for question in questions:
-		if(question==""):
-			continue
 
 		#extract named entities and determine the subject
 		question_entities = list(ner.extract_ne(question).values())
+		question_entities = sorted(question_entities,key=ner.get_key)
+
+		if(question==""):
+			continue
+
 		if(len(question_entities)==0):
-			answers.append("Could not answer question. (Subject unclear)")
+			print("Could not answer question. (Subject unclear)")
 			continue
 
-		#pick out highest accuracy relationship (likely the topic of the question)
-		question_relationships = get_relationships(question,question_entities)
+		#find relationships between question_entities in question
+		question_relationships = get_relationships(question, question_entities, question_entities)
 		if(len(question_relationships)==0):
-			answers.append("Could not answer question. (Relation unclear)")
+			print("Could not answer question. (Relation unclear)")
 			continue
 
-		#find most accurate relationships (this is likely the question topic)
-		topic = Relationship(None,None,"NO RELATION",0.0)
-		for relationship in question_relationships.values():
-			if(relationship.score >= topic.score):
-				topic = relationship
-		if(topic.score==0.0):
-			answers.append("Could not answer question. (Topic unclear)")
-			continue
+		#find relationships between question_entities in article_text
+		article_relationships = get_relationships(article_text, question_entities, article_entities)
+		relation_info = get_relation_info(article_relationships)
 
-		#match topic relationship to existing dictionary of relationships
-		if(topic.kind in relation_info.keys()):
-			knowledge_base = relation_info[topic.kind]
-			if(topic.entity1 in knowledge_base.keys()):
-				answer_entity = knowledge_base[topic.entity1][0]
-				answers.append(answer_entity.name)
-			elif(topic.entity2 in knowledge_base.keys()):
-				answer_entity = knowledge_base[topic.entity2][0]
-				answers.append(answer_entity.name)
-			else:
-				backup_answer = list(knowledge_base.values())[0]
-				answers.append(backup_answer[0].name)
+		#try to find the relationships in question to the knowledge base
+		answer_is_found = False
+		answer=""
+		for topic in question_relationships.values():
+			if(answer_is_found):
+				break
+			if(topic.kind in relation_info.keys()):
+				if(topic.entity1 in relation_info[topic.kind].keys()):
+					answer = relation_info[topic.kind][topic.entity1][0].name
+					answer_is_found = True
+				elif(topic.entity2 in relation_info[topic.kind].keys()):
+					answer = relation_info[topic.kind][topic.entity2][0].name
+					answer_is_found = True
+		if(answer_is_found):
+			print(answer)
 		else:
-			backup_answer = list(list(knowledge_base.values())[0])[0]
-			answers.append(backup_answer.name)
-
-	return answers
+			print("Could not answer question. (Answer not found)")
 
 
 
@@ -276,7 +281,7 @@ def main():
     r = re.compile(r'(\.|\n)')
 
     answers = answer_questions(article_text,questions)
-    write_answers(answers)
+    #write_answers(answers)
     
 
 

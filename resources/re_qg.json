@@ -2,7 +2,7 @@
 	"residence":
 		{
 			"pattern": "Where does entity1 live?",
-			"binary": "Does entity1 live in entity2?: Yes",
+			"binary": "Does entity1 live in entity2?",
 			"entity1_labels" : "['PERSON']",
 			"entity2_labels" : "['LOC','GPE','FAC']",
 			"quality" : 0.5
@@ -25,6 +25,15 @@
 			"entity1_labels" : "['PERSON']",
 			"entity2_labels" : "['LOC','GPE','FAC','NORP,ORG']",
 			"quality" : 0.5
+		},
+
+	"location":
+		{
+			"pattern": "Where is entity1 located?",
+			"binary": "Is entity1 located in entity2?",
+			"entity1_labels" : "['PERSON','GPE','FAC','NORP','ORG',LOC']",
+			"entity2_labels" : "['PERSON','GPE','FAC','NORP','ORG',LOC']",
+			"quality" : 0.8
 		},
 
 
@@ -167,7 +176,7 @@
 
 	"part of":
 		{
-			"pattern": "What is entity2 a part of?: entity1",
+			"pattern": "What is entity2 a part of?",
 			"binary": "Is entity2 a part of entity1?",
 			"entity1_labels" : "['PERSON']",
 			"entity2_labels" : "['ORG','GPE','WORK_OF_ART']",
