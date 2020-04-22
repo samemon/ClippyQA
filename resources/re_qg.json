@@ -181,6 +181,599 @@
 			"entity1_labels" : "['PERSON']",
 			"entity2_labels" : "['ORG','GPE','WORK_OF_ART']",
 			"quality" : 0.5
-		}
+		},
 
+	"head of government":
+		{
+			"pattern": "Who is the head of entity2?",
+			"binary": "Is entity1 the head of entity2?",
+			"entity1_labels": "['PERSON','ORG']",
+			"entity2_labels": "['ORG','LOC','GPE']",
+			"quality": 0.8
+		},
+
+	"country":
+		{
+			"pattern": "What is the sovereign state or country of entity2?",
+			"binary": "Is entity1 the sovereign state or country of entity2?",
+			"entity1_labels": "['ORG','LOC','GPE']",
+			"entity2_labels": "['ORG','LOC','GPE']",
+			"quality": 0.8
+		},
+
+	"country of citizenship":
+		{
+			"pattern": "What country is entity2 a citizen of?",
+			"binary": "Is entity1 a citizen of entity2?",
+			"entity1_labels": "['PERSON']",
+			"entity2_labels": "['ORG','LOC','GPE']",
+			"quality": 0.8
+		},
+
+	"instance of":
+		{
+			"pattern": "What is entity1 an instance of?",
+			"binary": "Is entity1 an instance of entity2?",
+			"entity1_labels": "['ALL']",
+			"entity2_labels": "['ALL']",
+			"quality": 0.5
+		},
+
+	"position of":
+		{
+			"pattern": "Who held the position of entity2?",
+			"binary": "Has entity1 ever held the position of entity2?",
+			"entity1_labels": "['ALL']",
+			"entity2_labels": "['ALL']",
+			"quality": 0.5
+		},
+
+	"director":
+		{
+			"pattern": "Who is the director of entity2?",
+			"binary": "Was entity2 ever directed by entity2?",
+			"entity1_labels": "['PERSON']",
+			"entity2_labels": "['ALL']",
+			"quality": 0.8
+		},
+
+	"located in the administrative territorial entity":
+		{
+			"pattern": "Which administrative territorial entity is entity1 located in?",
+			"binary": "is entity1 located in the administrative territory of entity2?",
+			"entity1_labels": "['PERSON']",
+			"entity2_labels": "['ALL']",
+			"quality": 0.8
+		},
+
+	"position of":
+		{
+			"pattern": "Who held the position of entity2?",
+			"binary": "Did entity1 ever hold the position of entity2?",
+			"entity1_labels": "['PERSON']",
+			"entity2_labels": "['ALL']",
+			"quality": 0.8
+		},
+
+	"screenwriter":
+		{
+			"pattern": "Who was the screenwriter of entity2?",
+			"binary": "Was entity1 ever the screenwriter of entity2?",
+			"entity1_labels": "['PERSON']",
+			"entity2_labels": "['WORK_OF_ART','ORG']",
+			"quality": 0.8
+		},
+
+	"architect":
+		{
+			"pattern": "Who was the architect of entity2?",
+			"binary": "Was entity1 ever the architect of entity2?",
+			"entity1_labels": "['PERSON']",
+			"entity2_labels": "['ALL']",
+			"quality": 0.8
+		},
+
+	"composer":
+		{
+			"pattern": "Who was the composer of entity2?",
+			"binary": "Was entity1 ever the composer of entity2?",
+			"entity1_labels": "['PERSON']",
+			"entity2_labels": "['WORK_OF_ART']",
+			"quality": 0.8
+		},
+
+	"field of work":
+		{
+			"pattern": "What field of work is entity1 in?",
+			"binary": "Was entity1 ever in the field of entity2?",
+			"entity1_labels": "['PERSON','ORG','FAC','NORP']",
+			"entity2_labels": "['ALL']",
+			"quality": 0.8
+		},
+
+	"member of political party":
+		{
+			"pattern": "What political party is entity1 a member of?",
+			"binary": "Was entity1 ever a member of entity2?",
+			"entity1_labels": "['PERSON','ORG','FAC','NORP']",
+			"entity2_labels": "['ORG','FAC','NORP']",
+			"quality": 0.8
+		},
+
+	"league":
+		{
+			"pattern": "What leauge is entity1 in?",
+			"binary": "Was entity1 ever in entity2?",
+			"entity1_labels": "['PERSON','ORG','FAC','NORP']",
+			"entity2_labels": "['ORG','FAC','NORP']",
+			"quality": 0.8
+		},
+
+	"movement":
+		{
+			"pattern": "What movement is entity1 in?",
+			"binary": "Was entity1 ever in entity2?",
+			"entity1_labels": "['PERSON','ORG','FAC','NORP']",
+			"entity2_labels": "['ORG','FAC','NORP']",
+			"quality": 0.8
+		},
+
+	"genre":
+		{
+			"pattern": "What genre is entity1 in?",
+			"binary": "Was entity1 ever in entity2?",
+			"entity1_labels": "['PERSON','ORG','FAC','NORP']",
+			"entity2_labels": "['ORG','FAC','NORP']",
+			"quality": 0.8
+		},
+
+	"operator":
+		{
+			"pattern": "Who is the operator of entity2?",
+			"binary": "Was entity1 ever the operator of entity2?",
+			"entity1_labels": "['PERSON','ORG','FAC','NORP']",
+			"entity2_labels": "['ORG','FAC','NORP']",
+			"quality": 0.8
+		},
+
+	"religion":
+		{
+			"pattern": "What religion is entity1 associated with?",
+			"binary": "Was entity1 ever a worshipper of entity2?",
+			"entity1_labels": "['PERSON','ORG','FAC','NORP']",
+			"entity2_labels": "['ORG','FAC','NORP']",
+			"quality": 0.8
+		},
+
+	"religion":
+		{
+			"pattern": "What religion is entity1 associated with?",
+			"binary": "Was entity1 ever a worshipper of entity2?",
+			"entity1_labels": "['PERSON','ORG','FAC','NORP']",
+			"entity2_labels": "['ORG','FAC','NORP']",
+			"quality": 0.8
+		},
+
+	"contains administrative territorial entity":
+		{
+			"pattern": "Which administrative territorial entity is entity1 located in?",
+			"binary": "is entity1 located in the administrative territory of entity2?",
+			"entity1_labels": "['PERSON']",
+			"entity2_labels": "['ALL']",
+			"quality": 0.8
+		},
+
+	"performer":
+		{
+			"pattern": "Who was a performer in entity2?",
+			"binary": "Did entity1 perform in entity2?",
+			"entity1_labels": "['PERSON']",
+			"entity2_labels": "['ALL']",
+			"quality": 0.8
+		},
+
+	"manufacturer":
+		{
+			"pattern": "Who was a manufacturer of entity2?",
+			"binary": "Did entity1 manufacture entity2?",
+			"entity1_labels": "['PERSON']",
+			"entity2_labels": "['ALL']",
+			"quality": 0.8
+		},
+
+	"developer":
+		{
+			"pattern": "Who was a developer of entity2?",
+			"binary": "Did entity1 develop entity2?",
+			"entity1_labels": "['PERSON']",
+			"entity2_labels": "['ALL']",
+			"quality": 0.8
+		},
+
+	"developer":
+		{
+			"pattern": "Who was a developer of entity2?",
+			"binary": "Did entity1 develop entity2?",
+			"entity1_labels": "['PERSON']",
+			"entity2_labels": "['ALL']",
+			"quality": 0.8
+		},
+
+	"military branch":
+		{
+			"pattern": "Which branch of the military was entity1 in?",
+			"binary": "Was entity1 in entity2?",
+			"entity1_labels": "['PERSON']",
+			"entity2_labels": "['ALL']",
+			"quality": 0.8
+		},
+
+	"record label":
+		{
+			"pattern": "Which record label was entity1 in?",
+			"binary": "Was entity1 in entity2?",
+			"entity1_labels": "['PERSON']",
+			"entity2_labels": "['ALL']",
+			"quality": 0.8
+		},
+
+	"operating system":
+		{
+			"pattern": "Which operating system does entity1 work with?",
+			"binary": "Is entity2 a valid operating system for entity2?",
+			"entity1_labels": "['PERSON']",
+			"entity2_labels": "['ALL']",
+			"quality": 0.8
+		},
+
+	"subsidiary":
+		{
+			"pattern": "Who was a subsidiary of entity1?",
+			"binary": "Was entity2 a subsidiary of entity1?",
+			"entity1_labels": "['PERSON']",
+			"entity2_labels": "['ALL']",
+			"quality": 0.8
+		},
+
+	"platform":
+		{
+			"pattern": "What was a platform for entity1?",
+			"binary": "Was entity2 a platform of entity1?",
+			"entity1_labels": "['PERSON']",
+			"entity2_labels": "['ALL']",
+			"quality": 0.8
+		},
+
+	"mouth of the watercourse":
+		{
+			"pattern": "What body of water does entity1 flow to?",
+			"binary": "Does entity1 flow to entity2?",
+			"entity1_labels": "['PERSON']",
+			"entity2_labels": "['ALL']",
+			"quality": 0.8	
+		},
+
+	"language of work or name":
+		{
+			"pattern": "What language is entity2 in?",
+			"binary": "Does entity1 come from the entity2 language?",
+			"entity1_labels": "['PERSON']",
+			"entity2_labels": "['ALL']",
+			"quality": 0.8	
+		},
+
+	"original work":
+		{
+			"pattern": "What network did entity1 originally air on?",
+			"binary": "Did entity1 originally air on entity2?",
+			"entity1_labels": "['PERSON']",
+			"entity2_labels": "['ALL']",
+			"quality": 0.8	
+		},
+
+	"occupant":
+		{
+			"pattern": "Which facility or building did entity2 occupy?",
+			"binary": "Did entity2 ever occupy entity1?",
+			"entity1_labels": "['PERSON']",
+			"entity2_labels": "['ALL']",
+			"quality": 0.8	
+		},
+
+	"country of origin":
+		{
+			"pattern": "Where is entity1 originally from?",
+			"binary": "Was entity1 originally from entity2?",
+			"entity1_labels": "['PERSON']",
+			"entity2_labels": "['ALL']",
+			"quality": 0.8	
+		},
+
+	"country of origin":
+		{
+			"pattern": "Where is entity1 originally from?",
+			"binary": "Was entity1 originally from entity2?",
+			"entity1_labels": "['PERSON']",
+			"entity2_labels": "['ALL']",
+			"quality": 0.8	
+		},
+
+	"located on terrain feature":
+		{
+			"pattern": "Where is entity1 located?",
+			"binary": "Is entity1 located in entity2?",
+			"entity1_labels" : "['PERSON','GPE','FAC','NORP','ORG',LOC']",
+			"entity2_labels" : "['PERSON','GPE','FAC','NORP','ORG',LOC']",
+			"quality" : 0.8
+		},
+
+	"participant":
+		{
+			"pattern": "What event did entity2 participate in?",
+			"binary": "Did entity2 ever participate in entity1?",
+			"entity1_labels": "['PERSON']",
+			"entity2_labels": "['ALL']",
+			"quality": 0.8	
+		},
+
+	"location of formation":
+		{
+			"pattern": "What location was entity1 formed in?",
+			"binary": "Was entity1 formed in entity2?",
+			"entity1_labels": "['PERSON']",
+			"entity2_labels": "['ALL']",
+			"quality": 0.8	
+		},
+
+	"location of formation":
+		{
+			"pattern": "What location was entity1 formed in?",
+			"binary": "Was entity1 formed in entity2?",
+			"entity1_labels": "['PERSON']",
+			"entity2_labels": "['ALL']",
+			"quality": 0.8	
+		},
+
+	"tributary":
+		{
+			"pattern": "What is entity1 a tributary of?",
+			"binary": "Is entity1 a tributary of entity2?",
+			"entity1_labels": "['PERSON']",
+			"entity2_labels": "['ALL']",
+			"quality": 0.8	
+		},
+
+	"successful candidate":
+		{
+			"pattern": "Who was the successful candidate in entity1?",
+			"binary": "Was entity2 the successful candidate in entity1?",
+			"entity1_labels": "['PERSON']",
+			"entity2_labels": "['ALL']",
+			"quality": 0.8	
+		},
+
+	"applies to jurisdiction":
+		{
+			"pattern": "What jurisdiction does entity1 apply to?",
+			"binary": "Does entity1 apply to entity2?",
+			"entity1_labels": "['PERSON']",
+			"entity2_labels": "['ALL']",
+			"quality": 0.8	
+		},
+
+	"instrument":
+		{
+			"pattern": "What instrument does entity1 play?",
+			"binary": "Does entity1 play entity2?",
+			"entity1_labels": "['PERSON']",
+			"entity2_labels": "['ALL']",
+			"quality": 0.8	
+		},
+
+	"instrument":
+		{
+			"pattern": "What instrument does entity1 play?",
+			"binary": "Does entity1 play entity2?",
+			"entity1_labels": "['PERSON']",
+			"entity2_labels": "['ALL']",
+			"quality": 0.8	
+		},
+
+	"winner":
+		{
+			"pattern": "Who won entity1?",
+			"binary": "Did entity2 win entity2?",
+			"entity1_labels": "['PERSON']",
+			"entity2_labels": "['ALL']",
+			"quality": 0.8	
+		},
+
+	"winner":
+		{
+			"pattern": "Who is entity1 licensed to broadcast to?",
+			"binary": "Is entity1 licensed to broadcast to entity2?",
+			"entity1_labels": "['PERSON']",
+			"entity2_labels": "['ALL']",
+			"quality": 0.8	
+		},
+
+	"nominated for":
+		{
+			"pattern": "What was entity1 nominated for?",
+			"binary": "Was entity1 nominated for entity2?",
+			"entity1_labels": "['PERSON']",
+			"entity2_labels": "['ALL']",
+			"quality": 0.8	
+		},
+
+	"heritage designation":
+		{
+			"pattern": "What was entity1 designated for?",
+			"binary": "Was entity1 designated for entity2?",
+			"entity1_labels": "['PERSON']",
+			"entity2_labels": "['ALL']",
+			"quality": 0.8	
+		},
+
+	"crosses":
+		{
+			"pattern": "What does entity1 cross?",
+			"binary": "Does entity1 cross entity2?",
+			"entity1_labels": "['PERSON']",
+			"entity2_labels": "['ALL']",
+			"quality": 0.8	
+		},
+
+	"located in or next to body of water":
+		{
+			"pattern": "What body of water is entity1 near?",
+			"binary": "Is entity1 near entity2?",
+			"entity1_labels": "['PERSON']",
+			"entity2_labels": "['ALL']",
+			"quality": 0.8	
+		},
+
+	"original language of work":
+		{
+			"pattern": "What is the original language of entity1?",
+			"binary": "Is the original language of entity1 entity2?",
+			"entity1_labels": "['PERSON']",
+			"entity2_labels": "['ALL']",
+			"quality": 0.8	
+		},
+
+	"position played on team / speciality":
+		{
+			"pattern": "What is the position or speciality of entity1?",
+			"binary": "Is entity2 the position or speciality of entity1?",
+			"entity1_labels": "['PERSON']",
+			"entity2_labels": "['ALL']",
+			"quality": 0.8	
+		},
+
+	"sport":
+		{
+			"pattern": "What sport does entity1 play?",
+			"binary": "Does entity1 play entity2?",
+			"entity1_labels": "['PERSON']",
+			"entity2_labels": "['ALL']",
+			"quality": 0.8	
+		},
+
+	"main subject":
+		{
+			"pattern": "What is the main subject of entity1?",
+			"binary": "Is entity2 the main subject of entity2?",
+			"entity1_labels": "['PERSON']",
+			"entity2_labels": "['ALL']",
+			"quality": 0.8	
+		},
+
+	"main subject":
+		{
+			"pattern": "What is the main subject of entity1?",
+			"binary": "Is entity2 the main subject of entity1?",
+			"entity1_labels": "['PERSON']",
+			"entity2_labels": "['ALL']",
+			"quality": 0.8	
+		},
+
+	"author":
+		{
+			"pattern": "Who is the author of entity1?",
+			"binary": "Is entity2 the author of entity1?",
+			"entity1_labels": "['PERSON']",
+			"entity2_labels": "['ALL']",
+			"quality": 0.8	
+		},
+
+	"author":
+		{
+			"pattern": "Who is the author of entity1?",
+			"binary": "Is entity2 the author of entity1?",
+			"entity1_labels": "['PERSON']",
+			"entity2_labels": "['ALL']",
+			"quality": 0.8	
+		},
+
+	"member of sports team":
+		{
+			"pattern": "What team is entity1 a member of?",
+			"binary": "Is entity1 a member of entity2?",
+			"entity1_labels": "['PERSON']",
+			"entity2_labels": "['ALL']",
+			"quality": 0.8	
+		},
+
+	"educated at":
+		{
+			"pattern": "Where was entity1 educated at?",
+			"binary": "Was entity1 educated at entity2?",
+			"entity1_labels": "['PERSON']",
+			"entity2_labels": "['ALL']",
+			"quality": 0.8	
+		},
+
+	"employer":
+		{
+			"pattern": "Who is the employer of entity1?",
+			"binary": "Is entity1 employed by entity2?",
+			"entity1_labels": "['PERSON']",
+			"entity2_labels": "['ALL']",
+			"quality": 0.8	
+		},
+
+	"place of burial":
+		{
+			"pattern": "Where is entity1 buried?",
+			"binary": "Is entity1 buried in entity2?",
+			"entity1_labels": "['PERSON']",
+			"entity2_labels": "['ALL']",
+			"quality": 0.8	
+		},
+
+	"cast member":
+		{
+			"pattern": "What is entity1 a cast member of?",
+			"binary": "Is entity1 a cast member of entity2?",
+			"entity1_labels": "['PERSON']",
+			"entity2_labels": "['ALL']",
+			"quality": 0.8	
+		},
+
+	"award received":
+		{
+			"pattern": "What award did entity1 receive?",
+			"binary": "Did entity1 receive entity2?",
+			"entity1_labels": "['PERSON']",
+			"entity2_labels": "['ALL']",
+			"quality": 0.8	
+		},
+
+	"creator":
+		{
+			"pattern": "Who was the creator of entity2?",
+			"binary": "Was entity2 created by entity1?",
+			"entity1_labels": "['PERSON']",
+			"entity2_labels": "['WORK_OF_ART']",
+			"quality": 0.8
+		},
+
+	"production company":
+		{
+			"pattern": "What company produced entity1?",
+			"binary": "Was entity2 produced by entity1?",
+			"entity1_labels": "['PERSON']",
+			"entity2_labels": "['WORK_OF_ART']",
+			"quality": 0.8
+		},
+
+	"production company":
+		{
+			"pattern": "What company produced entity1?",
+			"binary": "Was entity2 produced by entity1?",
+			"entity1_labels": "['PERSON']",
+			"entity2_labels": "['WORK_OF_ART']",
+			"quality": 0.8
+		}
 }

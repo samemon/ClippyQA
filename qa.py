@@ -3,6 +3,8 @@ import heapq
 import json
 import re
 
+import nltk
+
 #from coref_resolution import coref
 from ne_extraction import ner
 from relation_extraction import nre_qg
@@ -12,6 +14,8 @@ from dependency_parsing import dp
 #Stores wh- and binary patterns for relation-based questions
 RE_QG_JSON = open("resources/re_qg.json","r").read()
 RE_RULES = json.loads(RE_QG_JSON)
+RELATION_KINDS = ['PERSON','NORP','FAC','ORG','GPE','LOC','PRODUCT','EVENT','WORK_OF_ART','LAW',\
+				  'LANGUAGE','DATE','TIME','PERCENT','MONEY','QUANITY','ORDINAL','CARDINAL']
 
 #Stores patterns for dependency-parse based questions
 DP_QG_JSON = open("resources/dp_qg.json","r").read()
@@ -19,7 +23,7 @@ DP_RULES = json.loads(DP_QG_JSON)
 
 #Controls how far RE goes to detect relationships for each named entity
 #Increasing may lead to more relationships at the cost of increased runtime 
-RE_GRANULARITY = 10
+RE_GRANULARITY = 100
 
 
 
@@ -88,7 +92,7 @@ class Question:
 
 
 
-def get_relationships(text,local_entities,global_entities):
+def get_relationships(text,local_entities,global_entities, local_labels, global_labels):
 	"""
 	Takes a list of named entities and returns all 
 	detected relationships amongst them
@@ -99,27 +103,18 @@ def get_relationships(text,local_entities,global_entities):
 
 	relationships = dict()
 
-	local_count = len(local_entities)
-	global_count = len(global_entities)
-
-	entity_dict= dict()
-	for i in range(global_count):
-		entity_dict[global_entities[i].name] = i
-
 	for entity1 in local_entities:
-		if(entity1.name not in entity_dict.keys()):
+		if(entity1.label not in local_labels):
 			continue
-
-		index = entity_dict[entity1.name]
-		for j in range(max(0,index-RE_GRANULARITY),min(global_count,index+RE_GRANULARITY)):
-			entity2 = global_entities[j]
-			if((entity1.name,entity2.name) in relationships):
+		for entity2 in global_entities:
+			if(entity2.label not in global_labels):
 				continue
 			(_kind, _score) = nre_qg.infer(text, entity1.start_char \
 							, entity1.end_char, entity2.start_char \
 							, entity2.end_char)
 			relationships[(entity1.name,entity2.name)] = \
 						Relationship(entity1, entity2, _kind, _score) 
+
 
 	return relationships
 
@@ -140,8 +135,8 @@ def get_relation_info(relationships):
 	INPUT: Dict<(Named_Entity, Named_Entity),Relationship>
 	OUTPUT: Dict<  
 				Relationship.Kind,  
-				Dict< Named_Entity,
-					  List<Named_Entity>  
+				Dict< Named_Entity.name,
+					  List<Named_Entity.name>  
 					 >   
 				>
 
@@ -159,9 +154,9 @@ def get_relation_info(relationships):
 			if(relation.entity1==relation.entity2):
 				continue
 			if(relation.entity1 not in temp):
-				temp[relation.entity1] = [relation.entity2]
+				temp[relation.entity1.name] = [relation.entity2.name]
 			else:
-				temp[relation.entity1].append(relation.entity2)
+				temp[relation.entity1.name].append(relation.entity2.name)
 		info[kind] = temp
 
 	return info
@@ -174,10 +169,8 @@ def answer_questions(article_text, questions):
 	and returns a list of answers corresponding to each question
 
 	INPUT: String, List<String>
-	OUTPUT: List<String>
+	OUTPUT: prints answers to STDOUT
 	"""
-
-	###article_text = coref.resolve_corefs(article_text)
 
 	#Build up knowledge base from document
 	article_entities = list(ner.extract_ne(article_text).values())
@@ -186,9 +179,53 @@ def answer_questions(article_text, questions):
 	answers = []
 	for question in questions:
 
+		global_labels = []
+		local_labels = []
+
+		#Replacing Wh-words with a representative dummy entity to improve OpenNRE performance
+		#Also sets grammatically appropriate label(s) for the object of the question
+		for wh_word in ["who",'Who']:
+			if wh_word in question.split():
+				question = question.replace(wh_word,'ALEX')
+				global_labels = ['PERSON']
+
+		for wh_word in ["what",'What']:
+			if wh_word in question.split():
+				question = question.replace(wh_word,'GIZMO')
+				global_labels = ['PRODUCT','WORK_OF_ART','LAW']
+
+		for wh_word in ["where",'Where']:
+			if wh_word in question.split():
+				question = question.replace(wh_word,'MONROEVILLE')
+				global_labels = ['FAC','LOC','GPE']
+
+		for wh_word in ["when",'When']:
+			if wh_word in question.split():
+				question = question.replace(wh_word,'1945')
+				global_labels = ['TIME','DATE','EVENT']
+
+		for wh_word in ["whom",'Whom']:
+			if wh_word in question.split():
+				question = question.replace(wh_word,'ALEX')
+				global_labels = ['PERSON','ORG']
+			
+		for wh_word in ["how much",'How much']:
+			if wh_word in question.split():
+				question = question.replace(wh_word,'AMOUNT')
+				global_labels = ['PERCENT','MONEY','QUANITY','CARDINAL']
+
+		question = question.replace("'s","")
+
 		#extract named entities and determine the subject
 		question_entities = list(ner.extract_ne(question).values())
 		question_entities = sorted(question_entities,key=ner.get_key)
+
+		#Determine grammatically appropriate label(s) for the subject of the question
+		for question_entity in question_entities:
+			if question_entity.name in ['ALEX','GIZMO','MONROEVILLE','1945','AMOUNT']:
+				continue
+			else:
+				local_labels = [question_entity.label]
 
 		if(question==""):
 			continue
@@ -198,14 +235,15 @@ def answer_questions(article_text, questions):
 			continue
 
 		#find relationships between question_entities in question
-		question_relationships = get_relationships(question, question_entities, question_entities)
+		question_relationships = get_relationships(question, question_entities, question_entities, RELATION_KINDS, RELATION_KINDS)
 		if(len(question_relationships)==0):
 			print("Could not answer question. (Relation unclear)")
 			continue
 
-		#find relationships between question_entities in article_text
-		article_relationships = get_relationships(article_text, question_entities, article_entities)
+		#find relationships between entities in question_text and article_text
+		article_relationships = get_relationships(article_text, question_entities+article_entities, article_entities, local_labels, global_labels)
 		relation_info = get_relation_info(article_relationships)
+
 
 		#try to find the relationships in question to the knowledge base
 		answer_is_found = False
@@ -214,16 +252,18 @@ def answer_questions(article_text, questions):
 			if(answer_is_found):
 				break
 			if(topic.kind in relation_info.keys()):
-				if(topic.entity1 in relation_info[topic.kind].keys()):
-					answer = relation_info[topic.kind][topic.entity1][0].name
+				if(topic.entity1.name in relation_info[topic.kind].keys()):
+					answer = relation_info[topic.kind][topic.entity1.name][0]
 					answer_is_found = True
-				elif(topic.entity2 in relation_info[topic.kind].keys()):
-					answer = relation_info[topic.kind][topic.entity2][0].name
+				elif(topic.entity2.name in relation_info[topic.kind].keys()):
+					answer = relation_info[topic.kind][topic.entity2.name][0]
 					answer_is_found = True
 		if(answer_is_found):
 			print(answer)
 		else:
+
 			print("Could not answer question. (Answer not found)")
+
 
 
 
@@ -254,20 +294,6 @@ def load_files():
 	except OSError:
 		raise OSError("File "+question_location + " not found. Code was run from " + sys.argv[0])
 	return (article_contents,question_contents)
-
-
-
-def write_answers(answers):
-	"""
-	Checks that answers are correctly formatted before outputting them
-
-	Input: List<String>
-	Output: STDOUT
-	"""
-	for i,answer in enumerate(answers):
-		if(answer.count('\n')!=0):
-			sys.stderr.write('Answer number ' + str(i) + ' contains a newline, which will mess up formatting\n')
-		print(answer)
 
 
 

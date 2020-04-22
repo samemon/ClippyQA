@@ -29,6 +29,9 @@ class Named_Entity:
 		self.end_char = _end_char
 		self.label = _label
 
+	def __str__(self):
+		return self.name
+
 
 def extract_ne(text):
 	"""
