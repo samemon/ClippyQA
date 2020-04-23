@@ -1,3 +1,4 @@
+
 import sys
 import heapq
 import json
@@ -204,7 +205,7 @@ def main(_filepath, _N):
 	ne_count = len(entities)
 	question_limit = int(_N)
 
-	question_topics = set()
+	question_topics = {}
 	question_count = 0
 
 	for i in range(ne_count):
@@ -222,16 +223,16 @@ def main(_filepath, _N):
 			if(question_count>question_limit):
 				break
 
-			if((entity1.name, entity2.name) in question_topics):
+			if(question_topics.get((entity1.name, entity2.name))):
 				continue
 
-			if((entity2.name,entity1.name) in question_topics):
+			if(question_topics.get((entity2.name, entity1.name))):
 				continue 
 
 			if(entity1.name==entity2.name):
 				continue
 
-			question_topics.add((entity1,entity2))
+			question_topics[(entity1,entity2)] = 1
 
 			(_kind, _score) = nre_qg.infer(text_excerpt, entity1.start_char \
 							, entity1.end_char, entity2.start_char \
