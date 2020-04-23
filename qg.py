@@ -20,7 +20,7 @@ DP_RULES = json.loads(DP_QG_JSON)
 
 #Controls how far RE goes to detect relationships for each named entity
 #Increasing may lead to more relationships at the cost of increased runtime 
-RE_GRANULARITY = 10
+RE_GRANULARITY = 5
 
 #What portion of the generated questions should be binary?
 BINARY_RATIO = 2/7
@@ -212,7 +212,12 @@ def main(_filepath, _N):
 		best_relationship = Relationship(None,None,"NO TYPE",0.0)
 
 		for j in range(max(0,i-RE_GRANULARITY), min(ne_count,i+RE_GRANULARITY)):
+
 			entity2 = entities[j]
+
+			text_startchar = min(entity1.start_char, entity2.start_char)
+			text_endchar = max(entity1.end_char, entity2.end_char)
+			text_excerpt = text[text_startchar:text_endchar]
 
 			if(question_count>question_limit):
 				break
@@ -227,18 +232,23 @@ def main(_filepath, _N):
 				continue
 
 			question_topics.add((entity1,entity2))
-			(_kind, _score) = nre_qg.infer(text, entity1.start_char \
+
+			(_kind, _score) = nre_qg.infer(text_excerpt, entity1.start_char \
 							, entity1.end_char, entity2.start_char \
 							, entity2.end_char)
+
 			if(_score>best_relationship.score):
-				best_relationship = Relationship(entity1,entity2,_kind,_score)
+				best_relationship.entity1 = entity1
+				best_relationship.entity2 = entity2
+				best_relationship.kind = _kind
+				best_relationship.score = _score
+				#best_relationship = Relationship(entity1,entity2,_kind,_score)
 		
 		if(best_relationship.score>0.0):
 			question = relationship_to_question(best_relationship)
 			if(question.score>0.0):
-				print(relationship_to_question(best_relationship).text)
+				print(relationship_to_question(best_relationship).text.replace("'s",""))
 				question_count+=1
-
 	return
 
 

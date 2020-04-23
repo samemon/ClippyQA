@@ -23,7 +23,7 @@
 			"pattern": "Where does entity1 work?",
 			"binary": "Does entity1 work in entity2?",
 			"entity1_labels" : "['PERSON']",
-			"entity2_labels" : "['LOC','GPE','FAC','NORP,ORG']",
+			"entity2_labels" : "['LOC','GPE','FAC','NORP', 'ORG']",
 			"quality" : 0.5
 		},
 
@@ -33,7 +33,7 @@
 			"binary": "Is entity1 located in entity2?",
 			"entity1_labels" : "['PERSON','GPE','FAC','NORP','ORG',LOC']",
 			"entity2_labels" : "['PERSON','GPE','FAC','NORP','ORG',LOC']",
-			"quality" : 0.8
+			"quality" : 0.5
 		},
 
 
@@ -53,7 +53,7 @@
 			"binary": "Are entity1 and entity2 related?",
 			"entity1_labels" : "['PERSON']",
 			"entity2_labels" : "['PERSON']",
-			"quality" : 0.25
+			"quality" : 0.5
 		},
 
 	"child":
@@ -62,7 +62,7 @@
 			"binary": "Is entity2 a parent of entity1?",
 			"entity1_labels" : "['PERSON']",
 			"entity2_labels" : "['PERSON']",
-			"quality" : 0.25
+			"quality" : 0.5
 		},
 
 	"father":
@@ -71,7 +71,7 @@
 			"binary": "Is entity2 the father of entity1?",
 			"entity1_labels" : "['PERSON']",
 			"entity2_labels" : "['PERSON']",
-			"quality" : 0.75
+			"quality" : 0.8
 		},
 
 	"mother":
@@ -80,7 +80,7 @@
 			"binary": "Is entity2 the mother of entity1?",
 			"entity1_labels" : "['PERSON']",
 			"entity2_labels" : "['PERSON']",
-			"quality" : 0.75
+			"quality" : 0.8
 		},
 
 
@@ -120,7 +120,7 @@
 			"binary": "Does entity1 have a part in entity2?",
 			"entity1_labels" : "['NORP','PRODUCT','EVENT','WORK_OF_ART','ORG']",
 			"entity2_labels" : "['PERSON','ORG','GPE','NORP']",
-			"quality" : 0.25
+			"quality" : 0.0
 		},
 
 
@@ -128,9 +128,9 @@
 		{
 			"pattern": "Which character does entity1 appear with?",
 			"binary": "Has entity2 ever appeared with entity1?",
-			"entity1_labels" : "['PERSON']",
-			"entity2_labels" : "['PERSON']",
-			"quality" : 0.25
+			"entity1_labels" : "['PERSON','WORK_OF_ART','PRODUCT']",
+			"entity2_labels" : "['PERSON','WORK_OF_ART','PRODUCT']",
+			"quality" : 0.0
 
 		},
 
@@ -151,7 +151,7 @@
 			"binary": "Is entity1 a follower of entity2?",
 			"entity1_labels" : "['PERSON','NORP']",
 			"entity2_labels" : "['PERSON','GPE','ORG']",
-			"quality" : 0.25
+			"quality" : 0.0
 		},
 
 
@@ -161,7 +161,7 @@
 			"binary": "Is entity2 a follower of entity1?",
 			"entity1_labels" : "['PERSON','NORP']",
 			"entity2_labels" : "['PERSON']",
-			"quality" : 0.25
+			"quality" : 0.0
 		},
 
 	"said to be the same as":
@@ -170,7 +170,7 @@
 			"binary": "Is entity1 be said to be the same as entity2?",
 			"entity1_labels" : "['PERSON','LOC','GPE','NORP','WORK_OF_ART','FAC']",
 			"entity2_labels" : "['PERSON','LOC','GPE','NORP','WORK_OF_ART','FAC']",
-			"quality" : 0.5
+			"quality" : 0.0
 		},
 
 
@@ -180,7 +180,7 @@
 			"binary": "Is entity2 a part of entity1?",
 			"entity1_labels" : "['PERSON']",
 			"entity2_labels" : "['ORG','GPE','WORK_OF_ART']",
-			"quality" : 0.5
+			"quality" : 0.0
 		},
 
 	"head of government":
@@ -214,18 +214,18 @@
 		{
 			"pattern": "What is entity1 an instance of?",
 			"binary": "Is entity1 an instance of entity2?",
-			"entity1_labels": "['ALL']",
-			"entity2_labels": "['ALL']",
-			"quality": 0.5
+			"entity1_labels": "['PRODUCT','EVENT','WORK_OF_ART','LAW','LANGUAGE','DATE','TIME','PERCENT','MONEY','QUANITY','ORDINAL','CARDINAL']",
+			"entity2_labels": "['NORP','FAC','ORG','GPE','LOC','PRODUCT','EVENT','WORK_OF_ART','LAW','LANGUAGE','DATE','TIME','PERCENT','MONEY','QUANITY','ORDINAL','CARDINAL']",
+			"quality": 0.0
 		},
 
 	"position of":
 		{
 			"pattern": "Who held the position of entity2?",
 			"binary": "Has entity1 ever held the position of entity2?",
-			"entity1_labels": "['ALL']",
-			"entity2_labels": "['ALL']",
-			"quality": 0.5
+			"entity1_labels": "['PERSON','NORP','ORG','GPE']",
+			"entity2_labels": "['PERSON','NORP','ORG','GPE','LOC','PRODUCT','EVENT','WORK_OF_ART']",
+			"quality": 0.2
 		},
 
 	"director":
@@ -233,7 +233,7 @@
 			"pattern": "Who is the director of entity2?",
 			"binary": "Was entity2 ever directed by entity2?",
 			"entity1_labels": "['PERSON']",
-			"entity2_labels": "['ALL']",
+			"entity2_labels": "['PERSON','NORP','FAC','ORG','GPE','LOC','PRODUCT','EVENT','WORK_OF_ART','LAW']",
 			"quality": 0.8
 		},
 
@@ -242,7 +242,7 @@
 			"pattern": "Which administrative territorial entity is entity1 located in?",
 			"binary": "is entity1 located in the administrative territory of entity2?",
 			"entity1_labels": "['PERSON']",
-			"entity2_labels": "['ALL']",
+			"entity2_labels": "['PERSON','NORP','FAC','ORG','GPE','LOC']",
 			"quality": 0.8
 		},
 
@@ -251,16 +251,16 @@
 			"pattern": "Who held the position of entity2?",
 			"binary": "Did entity1 ever hold the position of entity2?",
 			"entity1_labels": "['PERSON']",
-			"entity2_labels": "['ALL']",
-			"quality": 0.8
+			"entity2_labels": "['PERSON','NORP','FAC','ORG','GPE','LOC','PRODUCT','EVENT','WORK_OF_ART','LAW','LANGUAGE','DATE','TIME','PERCENT','MONEY','QUANITY','ORDINAL','CARDINAL']",
+			"quality": 0.2
 		},
 
 	"screenwriter":
 		{
 			"pattern": "Who was the screenwriter of entity2?",
 			"binary": "Was entity1 ever the screenwriter of entity2?",
-			"entity1_labels": "['PERSON']",
-			"entity2_labels": "['WORK_OF_ART','ORG']",
+			"entity1_labels": "['PERSON','ORG']",
+			"entity2_labels": "['WORK_OF_ART','ORG','PRODUCT']",
 			"quality": 0.8
 		},
 
@@ -268,8 +268,8 @@
 		{
 			"pattern": "Who was the architect of entity2?",
 			"binary": "Was entity1 ever the architect of entity2?",
-			"entity1_labels": "['PERSON']",
-			"entity2_labels": "['ALL']",
+			"entity1_labels": "['PERSON','ORG']",
+			"entity2_labels": "['NORP','FAC','ORG','GPE','LOC','EVENT','WORK_OF_ART']",
 			"quality": 0.8
 		},
 
@@ -278,7 +278,7 @@
 			"pattern": "Who was the composer of entity2?",
 			"binary": "Was entity1 ever the composer of entity2?",
 			"entity1_labels": "['PERSON']",
-			"entity2_labels": "['WORK_OF_ART']",
+			"entity2_labels": "['WORK_OF_ART','PRODUCT','LAW','LANGUAGE']",
 			"quality": 0.8
 		},
 
@@ -287,7 +287,7 @@
 			"pattern": "What field of work is entity1 in?",
 			"binary": "Was entity1 ever in the field of entity2?",
 			"entity1_labels": "['PERSON','ORG','FAC','NORP']",
-			"entity2_labels": "['ALL']",
+			"entity2_labels": "['PERSON','NORP','ORG','PRODUCT','EVENT','WORK_OF_ART','LAW','LANGUAGE']",
 			"quality": 0.8
 		},
 
@@ -296,7 +296,7 @@
 			"pattern": "What political party is entity1 a member of?",
 			"binary": "Was entity1 ever a member of entity2?",
 			"entity1_labels": "['PERSON','ORG','FAC','NORP']",
-			"entity2_labels": "['ORG','FAC','NORP']",
+			"entity2_labels": "['ORG','FAC','NORP','GPE','LOC']",
 			"quality": 0.8
 		},
 
@@ -305,7 +305,7 @@
 			"pattern": "What leauge is entity1 in?",
 			"binary": "Was entity1 ever in entity2?",
 			"entity1_labels": "['PERSON','ORG','FAC','NORP']",
-			"entity2_labels": "['ORG','FAC','NORP']",
+			"entity2_labels": "['ORG','FAC','NORP','GPE','LOC']",
 			"quality": 0.8
 		},
 
@@ -322,8 +322,8 @@
 		{
 			"pattern": "What genre is entity1 in?",
 			"binary": "Was entity1 ever in entity2?",
-			"entity1_labels": "['PERSON','ORG','FAC','NORP']",
-			"entity2_labels": "['ORG','FAC','NORP']",
+			"entity1_labels": "['PERSON','PRODUCT','WORK_OF_ART']",
+			"entity2_labels": "['ORG','FAC','NORP','PRODUCT','WORK_OF_ART','LAW','LANGUAGE']",
 			"quality": 0.8
 		},
 
@@ -345,22 +345,13 @@
 			"quality": 0.8
 		},
 
-	"religion":
-		{
-			"pattern": "What religion is entity1 associated with?",
-			"binary": "Was entity1 ever a worshipper of entity2?",
-			"entity1_labels": "['PERSON','ORG','FAC','NORP']",
-			"entity2_labels": "['ORG','FAC','NORP']",
-			"quality": 0.8
-		},
-
 	"contains administrative territorial entity":
 		{
 			"pattern": "Which administrative territorial entity is entity1 located in?",
 			"binary": "is entity1 located in the administrative territory of entity2?",
 			"entity1_labels": "['PERSON']",
-			"entity2_labels": "['ALL']",
-			"quality": 0.8
+			"entity2_labels": "['PERSON','NORP','FAC','ORG','GPE','LOC']",
+			"quality": 0.5
 		},
 
 	"performer":
@@ -368,7 +359,7 @@
 			"pattern": "Who was a performer in entity2?",
 			"binary": "Did entity1 perform in entity2?",
 			"entity1_labels": "['PERSON']",
-			"entity2_labels": "['ALL']",
+			"entity2_labels": "['ORG','GPE','LOC','PRODUCT','EVENT','WORK_OF_ART']",
 			"quality": 0.8
 		},
 
@@ -377,7 +368,7 @@
 			"pattern": "Who was a manufacturer of entity2?",
 			"binary": "Did entity1 manufacture entity2?",
 			"entity1_labels": "['PERSON']",
-			"entity2_labels": "['ALL']",
+			"entity2_labels": "['PERSON','NORP','FAC','ORG','GPE','LOC','PRODUCT','EVENT','WORK_OF_ART']",
 			"quality": 0.8
 		},
 
@@ -386,16 +377,7 @@
 			"pattern": "Who was a developer of entity2?",
 			"binary": "Did entity1 develop entity2?",
 			"entity1_labels": "['PERSON']",
-			"entity2_labels": "['ALL']",
-			"quality": 0.8
-		},
-
-	"developer":
-		{
-			"pattern": "Who was a developer of entity2?",
-			"binary": "Did entity1 develop entity2?",
-			"entity1_labels": "['PERSON']",
-			"entity2_labels": "['ALL']",
+			"entity2_labels": "['PERSON','WORK_OF_ART','PRODUCT','LAW','LANGUAGE']",
 			"quality": 0.8
 		},
 
@@ -404,7 +386,7 @@
 			"pattern": "Which branch of the military was entity1 in?",
 			"binary": "Was entity1 in entity2?",
 			"entity1_labels": "['PERSON']",
-			"entity2_labels": "['ALL']",
+			"entity2_labels": "['ORG']",
 			"quality": 0.8
 		},
 
@@ -412,44 +394,44 @@
 		{
 			"pattern": "Which record label was entity1 in?",
 			"binary": "Was entity1 in entity2?",
-			"entity1_labels": "['PERSON']",
-			"entity2_labels": "['ALL']",
-			"quality": 0.8
+			"entity1_labels": "['PERSON','NORP','FAC','ORG','GPE','LOC','PRODUCT','EVENT','WORK_OF_ART','LAW','LANGUAGE','DATE','TIME','PERCENT','MONEY','QUANITY','ORDINAL','CARDINAL']",
+			"entity2_labels": "['PERSON','NORP','FAC','ORG','GPE','LOC','PRODUCT','EVENT','WORK_OF_ART','LAW','LANGUAGE','DATE','TIME','PERCENT','MONEY','QUANITY','ORDINAL','CARDINAL']",
+			"quality": 0.0
 		},
 
 	"operating system":
 		{
 			"pattern": "Which operating system does entity1 work with?",
 			"binary": "Is entity2 a valid operating system for entity2?",
-			"entity1_labels": "['PERSON']",
-			"entity2_labels": "['ALL']",
-			"quality": 0.8
+			"entity1_labels": "['PERSON','NORP','FAC','ORG','GPE','LOC','PRODUCT','EVENT','WORK_OF_ART','LAW','LANGUAGE','DATE','TIME','PERCENT','MONEY','QUANITY','ORDINAL','CARDINAL']",
+			"entity2_labels": "['PERSON','NORP','FAC','ORG','GPE','LOC','PRODUCT','EVENT','WORK_OF_ART','LAW','LANGUAGE','DATE','TIME','PERCENT','MONEY','QUANITY','ORDINAL','CARDINAL']",
+			"quality": 0.0
 		},
 
 	"subsidiary":
 		{
 			"pattern": "Who was a subsidiary of entity1?",
 			"binary": "Was entity2 a subsidiary of entity1?",
-			"entity1_labels": "['PERSON']",
-			"entity2_labels": "['ALL']",
-			"quality": 0.8
+			"entity1_labels": "['PERSON','ORG','NORP']",
+			"entity2_labels": "['PERSON','ORG','NORP']",
+			"quality": 0.0
 		},
 
 	"platform":
 		{
 			"pattern": "What was a platform for entity1?",
 			"binary": "Was entity2 a platform of entity1?",
-			"entity1_labels": "['PERSON']",
-			"entity2_labels": "['ALL']",
-			"quality": 0.8
+			"entity1_labels": "['PERSON','NORP','FAC','ORG','GPE','LOC','PRODUCT','EVENT','WORK_OF_ART','LAW','LANGUAGE','DATE','TIME','PERCENT','MONEY','QUANITY','ORDINAL','CARDINAL']",
+			"entity2_labels": "['PERSON','NORP','FAC','ORG','GPE','LOC','PRODUCT','EVENT','WORK_OF_ART','LAW','LANGUAGE','DATE','TIME','PERCENT','MONEY','QUANITY','ORDINAL','CARDINAL']",
+			"quality": 0.0
 		},
 
 	"mouth of the watercourse":
 		{
 			"pattern": "What body of water does entity1 flow to?",
 			"binary": "Does entity1 flow to entity2?",
-			"entity1_labels": "['PERSON']",
-			"entity2_labels": "['ALL']",
+			"entity1_labels": "['LOC','GPE','FACE']",
+			"entity2_labels": "['LOC','GPE']",
 			"quality": 0.8	
 		},
 
@@ -457,8 +439,8 @@
 		{
 			"pattern": "What language is entity2 in?",
 			"binary": "Does entity1 come from the entity2 language?",
-			"entity1_labels": "['PERSON']",
-			"entity2_labels": "['ALL']",
+			"entity1_labels": "['PERSON','GPE','NORP','WORK_OF_ART','LANGUAGE','LAW','PRODUCT','ORG']",
+			"entity2_labels": "['LANGUAGE']",
 			"quality": 0.8	
 		},
 
@@ -466,17 +448,17 @@
 		{
 			"pattern": "What network did entity1 originally air on?",
 			"binary": "Did entity1 originally air on entity2?",
-			"entity1_labels": "['PERSON']",
-			"entity2_labels": "['ALL']",
-			"quality": 0.8	
+			"entity1_labels": "['PERSON','NORP','FAC','ORG','GPE','LOC','PRODUCT','EVENT','WORK_OF_ART','LAW','LANGUAGE','DATE','TIME','PERCENT','MONEY','QUANITY','ORDINAL','CARDINAL']",
+			"entity2_labels": "['PERSON','NORP','FAC','ORG','GPE','LOC','PRODUCT','EVENT','WORK_OF_ART','LAW','LANGUAGE','DATE','TIME','PERCENT','MONEY','QUANITY','ORDINAL','CARDINAL']",
+			"quality": 0.0
 		},
 
 	"occupant":
 		{
 			"pattern": "Which facility or building did entity2 occupy?",
 			"binary": "Did entity2 ever occupy entity1?",
-			"entity1_labels": "['PERSON']",
-			"entity2_labels": "['ALL']",
+			"entity1_labels": "['FAC']",
+			"entity2_labels": "['PERSON','ORG','NORP','GPE','FAC','WORK_OF_ART','PRODUCT']",
 			"quality": 0.8	
 		},
 
@@ -485,16 +467,7 @@
 			"pattern": "Where is entity1 originally from?",
 			"binary": "Was entity1 originally from entity2?",
 			"entity1_labels": "['PERSON']",
-			"entity2_labels": "['ALL']",
-			"quality": 0.8	
-		},
-
-	"country of origin":
-		{
-			"pattern": "Where is entity1 originally from?",
-			"binary": "Was entity1 originally from entity2?",
-			"entity1_labels": "['PERSON']",
-			"entity2_labels": "['ALL']",
+			"entity2_labels": "['LOC','GPE','ORG','NORP']",
 			"quality": 0.8	
 		},
 
@@ -512,8 +485,8 @@
 			"pattern": "What event did entity2 participate in?",
 			"binary": "Did entity2 ever participate in entity1?",
 			"entity1_labels": "['PERSON']",
-			"entity2_labels": "['ALL']",
-			"quality": 0.8	
+			"entity2_labels": "['PERSON','NORP','FAC','ORG','GPE','LOC','PRODUCT','EVENT','WORK_OF_ART','LAW','LANGUAGE','DATE','TIME','PERCENT','MONEY','QUANITY','ORDINAL','CARDINAL']",
+			"quality": 0.0
 		},
 
 	"location of formation":
@@ -521,16 +494,7 @@
 			"pattern": "What location was entity1 formed in?",
 			"binary": "Was entity1 formed in entity2?",
 			"entity1_labels": "['PERSON']",
-			"entity2_labels": "['ALL']",
-			"quality": 0.8	
-		},
-
-	"location of formation":
-		{
-			"pattern": "What location was entity1 formed in?",
-			"binary": "Was entity1 formed in entity2?",
-			"entity1_labels": "['PERSON']",
-			"entity2_labels": "['ALL']",
+			"entity2_labels": "['LOC','GPE','FAC']",
 			"quality": 0.8	
 		},
 
@@ -538,9 +502,9 @@
 		{
 			"pattern": "What is entity1 a tributary of?",
 			"binary": "Is entity1 a tributary of entity2?",
-			"entity1_labels": "['PERSON']",
-			"entity2_labels": "['ALL']",
-			"quality": 0.8	
+			"entity1_labels": "['PERSON','NORP','FAC','ORG','GPE','LOC','PRODUCT','EVENT','WORK_OF_ART','LAW','LANGUAGE','DATE','TIME','PERCENT','MONEY','QUANITY','ORDINAL','CARDINAL']",
+			"entity2_labels": "['PERSON','NORP','FAC','ORG','GPE','LOC','PRODUCT','EVENT','WORK_OF_ART','LAW','LANGUAGE','DATE','TIME','PERCENT','MONEY','QUANITY','ORDINAL','CARDINAL']",
+			"quality": 0.0
 		},
 
 	"successful candidate":
@@ -548,7 +512,7 @@
 			"pattern": "Who was the successful candidate in entity1?",
 			"binary": "Was entity2 the successful candidate in entity1?",
 			"entity1_labels": "['PERSON']",
-			"entity2_labels": "['ALL']",
+			"entity2_labels": "['PERSON','NORP','FAC','ORG','GPE','LOC','PRODUCT','EVENT','WORK_OF_ART','LAW','LANGUAGE','DATE','TIME','PERCENT','MONEY','QUANITY','ORDINAL','CARDINAL']",
 			"quality": 0.8	
 		},
 
@@ -556,8 +520,8 @@
 		{
 			"pattern": "What jurisdiction does entity1 apply to?",
 			"binary": "Does entity1 apply to entity2?",
-			"entity1_labels": "['PERSON']",
-			"entity2_labels": "['ALL']",
+			"entity1_labels": "['LAW','LANGUAGE']",
+			"entity2_labels": "['PERSON','NORP','FAC','ORG','GPE','LOC','PRODUCT','EVENT','WORK_OF_ART','LAW','LANGUAGE','DATE','TIME','PERCENT','MONEY','QUANITY','ORDINAL','CARDINAL']",
 			"quality": 0.8	
 		},
 
@@ -566,16 +530,7 @@
 			"pattern": "What instrument does entity1 play?",
 			"binary": "Does entity1 play entity2?",
 			"entity1_labels": "['PERSON']",
-			"entity2_labels": "['ALL']",
-			"quality": 0.8	
-		},
-
-	"instrument":
-		{
-			"pattern": "What instrument does entity1 play?",
-			"binary": "Does entity1 play entity2?",
-			"entity1_labels": "['PERSON']",
-			"entity2_labels": "['ALL']",
+			"entity2_labels": "['PERSON','NORP','FAC','ORG','GPE','LOC','PRODUCT','EVENT','WORK_OF_ART','LAW','LANGUAGE','DATE','TIME','PERCENT','MONEY','QUANITY','ORDINAL','CARDINAL']",
 			"quality": 0.8	
 		},
 
@@ -583,17 +538,8 @@
 		{
 			"pattern": "Who won entity1?",
 			"binary": "Did entity2 win entity2?",
-			"entity1_labels": "['PERSON']",
-			"entity2_labels": "['ALL']",
-			"quality": 0.8	
-		},
-
-	"winner":
-		{
-			"pattern": "Who is entity1 licensed to broadcast to?",
-			"binary": "Is entity1 licensed to broadcast to entity2?",
-			"entity1_labels": "['PERSON']",
-			"entity2_labels": "['ALL']",
+			"entity1_labels": "['PERSON','NORP','FAC','ORG','GPE','LOC','PRODUCT','EVENT','WORK_OF_ART','LAW','LANGUAGE','DATE','TIME','PERCENT','MONEY','QUANITY','ORDINAL','CARDINAL']",
+			"entity2_labels": "['PERSON','NORP','FAC','ORG','GPE','LOC','PRODUCT','EVENT','WORK_OF_ART','LAW','LANGUAGE','DATE','TIME','PERCENT','MONEY','QUANITY','ORDINAL','CARDINAL']",
 			"quality": 0.8	
 		},
 
@@ -602,7 +548,7 @@
 			"pattern": "What was entity1 nominated for?",
 			"binary": "Was entity1 nominated for entity2?",
 			"entity1_labels": "['PERSON']",
-			"entity2_labels": "['ALL']",
+			"entity2_labels": "['PERSON','NORP','FAC','ORG','GPE','LOC','PRODUCT','EVENT','WORK_OF_ART','LAW','LANGUAGE','DATE','TIME','PERCENT','MONEY','QUANITY','ORDINAL','CARDINAL']",
 			"quality": 0.8	
 		},
 
@@ -610,8 +556,8 @@
 		{
 			"pattern": "What was entity1 designated for?",
 			"binary": "Was entity1 designated for entity2?",
-			"entity1_labels": "['PERSON']",
-			"entity2_labels": "['ALL']",
+			"entity1_labels": "['LOC','GPE','FAC']",
+			"entity2_labels": "['PERSON','NORP','FAC','ORG','GPE','LOC','PRODUCT','EVENT','WORK_OF_ART','LAW','LANGUAGE','DATE','TIME','PERCENT','MONEY','QUANITY','ORDINAL','CARDINAL']",
 			"quality": 0.8	
 		},
 
@@ -619,8 +565,8 @@
 		{
 			"pattern": "What does entity1 cross?",
 			"binary": "Does entity1 cross entity2?",
-			"entity1_labels": "['PERSON']",
-			"entity2_labels": "['ALL']",
+			"entity1_labels": "['PERSON','NORP','FAC','ORG','GPE','LOC','PRODUCT','EVENT','WORK_OF_ART','LAW','LANGUAGE','DATE','TIME','PERCENT','MONEY','QUANITY','ORDINAL','CARDINAL']",
+			"entity2_labels": "['PERSON','NORP','FAC','ORG','GPE','LOC','PRODUCT','EVENT','WORK_OF_ART','LAW','LANGUAGE','DATE','TIME','PERCENT','MONEY','QUANITY','ORDINAL','CARDINAL']",
 			"quality": 0.8	
 		},
 
@@ -629,7 +575,7 @@
 			"pattern": "What body of water is entity1 near?",
 			"binary": "Is entity1 near entity2?",
 			"entity1_labels": "['PERSON']",
-			"entity2_labels": "['ALL']",
+			"entity2_labels": "['LOC','GPE']",
 			"quality": 0.8	
 		},
 
@@ -638,7 +584,7 @@
 			"pattern": "What is the original language of entity1?",
 			"binary": "Is the original language of entity1 entity2?",
 			"entity1_labels": "['PERSON']",
-			"entity2_labels": "['ALL']",
+			"entity2_labels": "['LANGUAGE']",
 			"quality": 0.8	
 		},
 
@@ -647,7 +593,7 @@
 			"pattern": "What is the position or speciality of entity1?",
 			"binary": "Is entity2 the position or speciality of entity1?",
 			"entity1_labels": "['PERSON']",
-			"entity2_labels": "['ALL']",
+			"entity2_labels": "['PERSON','NORP','FAC','ORG','GPE','LOC','PRODUCT','EVENT','WORK_OF_ART','LAW','LANGUAGE','DATE','TIME','PERCENT','MONEY','QUANITY','ORDINAL','CARDINAL']",
 			"quality": 0.8	
 		},
 
@@ -656,16 +602,7 @@
 			"pattern": "What sport does entity1 play?",
 			"binary": "Does entity1 play entity2?",
 			"entity1_labels": "['PERSON']",
-			"entity2_labels": "['ALL']",
-			"quality": 0.8	
-		},
-
-	"main subject":
-		{
-			"pattern": "What is the main subject of entity1?",
-			"binary": "Is entity2 the main subject of entity2?",
-			"entity1_labels": "['PERSON']",
-			"entity2_labels": "['ALL']",
+			"entity2_labels": "['PERSON','NORP','FAC','ORG','GPE','LOC','PRODUCT','EVENT','WORK_OF_ART','LAW','LANGUAGE','DATE','TIME','PERCENT','MONEY','QUANITY','ORDINAL','CARDINAL']",
 			"quality": 0.8	
 		},
 
@@ -673,26 +610,17 @@
 		{
 			"pattern": "What is the main subject of entity1?",
 			"binary": "Is entity2 the main subject of entity1?",
-			"entity1_labels": "['PERSON']",
-			"entity2_labels": "['ALL']",
-			"quality": 0.8	
+			"entity1_labels": "['PERSON','NORP','FAC','ORG','GPE','LOC','PRODUCT','EVENT','WORK_OF_ART','LAW','LANGUAGE','DATE','TIME','PERCENT','MONEY','QUANITY','ORDINAL','CARDINAL']",
+			"entity2_labels": "['PERSON','NORP','FAC','ORG','GPE','LOC','PRODUCT','EVENT','WORK_OF_ART','LAW','LANGUAGE','DATE','TIME','PERCENT','MONEY','QUANITY','ORDINAL','CARDINAL']",
+			"quality": 0.0
 		},
 
 	"author":
 		{
 			"pattern": "Who is the author of entity1?",
 			"binary": "Is entity2 the author of entity1?",
-			"entity1_labels": "['PERSON']",
-			"entity2_labels": "['ALL']",
-			"quality": 0.8	
-		},
-
-	"author":
-		{
-			"pattern": "Who is the author of entity1?",
-			"binary": "Is entity2 the author of entity1?",
-			"entity1_labels": "['PERSON']",
-			"entity2_labels": "['ALL']",
+			"entity1_labels": "['PERSON','WORK_OF_ART']",
+			"entity2_labels": "['PERSON']",
 			"quality": 0.8	
 		},
 
@@ -701,16 +629,16 @@
 			"pattern": "What team is entity1 a member of?",
 			"binary": "Is entity1 a member of entity2?",
 			"entity1_labels": "['PERSON']",
-			"entity2_labels": "['ALL']",
+			"entity2_labels": "['NORP','ORG']",
 			"quality": 0.8	
 		},
 
 	"educated at":
 		{
-			"pattern": "Where was entity1 educated at?",
+			"pattern": "Where was entity1 educated?",
 			"binary": "Was entity1 educated at entity2?",
 			"entity1_labels": "['PERSON']",
-			"entity2_labels": "['ALL']",
+			"entity2_labels": "['FAC','GPE','NORP','LOC']",
 			"quality": 0.8	
 		},
 
@@ -719,7 +647,7 @@
 			"pattern": "Who is the employer of entity1?",
 			"binary": "Is entity1 employed by entity2?",
 			"entity1_labels": "['PERSON']",
-			"entity2_labels": "['ALL']",
+			"entity2_labels": "['ORG','GPE','FAC','NORP']",
 			"quality": 0.8	
 		},
 
@@ -728,7 +656,7 @@
 			"pattern": "Where is entity1 buried?",
 			"binary": "Is entity1 buried in entity2?",
 			"entity1_labels": "['PERSON']",
-			"entity2_labels": "['ALL']",
+			"entity2_labels": "['LOC','GPE','FAC']",
 			"quality": 0.8	
 		},
 
@@ -737,7 +665,7 @@
 			"pattern": "What is entity1 a cast member of?",
 			"binary": "Is entity1 a cast member of entity2?",
 			"entity1_labels": "['PERSON']",
-			"entity2_labels": "['ALL']",
+			"entity2_labels": "['PERSON','NORP','FAC','ORG','GPE','LOC','PRODUCT','EVENT','WORK_OF_ART','LAW','LANGUAGE','DATE','TIME','PERCENT','MONEY','QUANITY','ORDINAL','CARDINAL']",
 			"quality": 0.8	
 		},
 
@@ -746,7 +674,7 @@
 			"pattern": "What award did entity1 receive?",
 			"binary": "Did entity1 receive entity2?",
 			"entity1_labels": "['PERSON']",
-			"entity2_labels": "['ALL']",
+			"entity2_labels": "['PERSON','NORP','FAC','ORG','GPE','LOC','PRODUCT','EVENT','WORK_OF_ART','LAW','LANGUAGE','DATE','TIME','PERCENT','MONEY','QUANITY','ORDINAL','CARDINAL']",
 			"quality": 0.8	
 		},
 
@@ -754,15 +682,6 @@
 		{
 			"pattern": "Who was the creator of entity2?",
 			"binary": "Was entity2 created by entity1?",
-			"entity1_labels": "['PERSON']",
-			"entity2_labels": "['WORK_OF_ART']",
-			"quality": 0.8
-		},
-
-	"production company":
-		{
-			"pattern": "What company produced entity1?",
-			"binary": "Was entity2 produced by entity1?",
 			"entity1_labels": "['PERSON']",
 			"entity2_labels": "['WORK_OF_ART']",
 			"quality": 0.8
