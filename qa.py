@@ -16,6 +16,7 @@ RE_QG_JSON = open("resources/re_qg.json","r").read()
 RE_RULES = json.loads(RE_QG_JSON)
 RELATION_KINDS = ['PERSON','NORP','FAC','ORG','GPE','LOC','PRODUCT','EVENT','WORK_OF_ART','LAW',\
 				  'LANGUAGE','DATE','TIME','PERCENT','MONEY','QUANITY','ORDINAL','CARDINAL']
+DUMMY_ENTITIES = ['ALEX','GIZMO','MONROEVILLE','1945','AMOUNT']
 
 #Stores patterns for dependency-parse based questions
 DP_QG_JSON = open("resources/dp_qg.json","r").read()
@@ -23,7 +24,7 @@ DP_RULES = json.loads(DP_QG_JSON)
 
 #Controls how far RE goes to detect relationships for each named entity
 #Increasing may lead to more relationships at the cost of increased runtime 
-RE_GRANULARITY = 100
+RE_GRANULARITY = 1000
 
 
 
@@ -48,15 +49,18 @@ class Relationship:
 		relationship's subject entity and its kind
 		"""
 		return self.kind==other.kind \
-		   and (self.entity1.text==other.entity1.text \
-			    or self.entity2.text==self.entity2.text)
+		   and (self.entity1.name==other.entity1.name \
+			    or self.entity2.name==self.entity2.name)
 
 	def __hash__(self):
-		return hash((self.entity1.text,self.kind))
+		return hash((self.entity1.name,self.kind))
 
 	def __str__(self):
 		return "(" + self.entity1.name + ", " + self.entity2.name + ", " \
 			       + self.kind + ")"
+
+	def get_entityNames(self):
+		return [self.entity1.name, self.entity2.name]
 
 
 
@@ -92,7 +96,7 @@ class Question:
 
 
 
-def get_relationships(text,local_entities,global_entities, local_labels, global_labels):
+def get_relationships(text,local_entities,global_entities):
 	"""
 	Takes a list of named entities and returns all 
 	detected relationships amongst them
@@ -104,12 +108,13 @@ def get_relationships(text,local_entities,global_entities, local_labels, global_
 	relationships = dict()
 
 	for entity1 in local_entities:
-		if(entity1.label not in local_labels):
-			continue
 		for entity2 in global_entities:
-			if(entity2.label not in global_labels):
+			text_startChar = min(entity1.start_char, entity2.start_char)
+			text_endChar = max(entity1.end_char, entity2.end_char)
+			text_excerpt = text[text_startChar:text_endChar]
+			if(entity1.name==entity2.name):
 				continue
-			(_kind, _score) = nre_qg.infer(text, entity1.start_char \
+			(_kind, _score) = nre_qg.infer(text_excerpt, entity1.start_char \
 							, entity1.end_char, entity2.start_char \
 							, entity2.end_char)
 			relationships[(entity1.name,entity2.name)] = \
@@ -117,51 +122,6 @@ def get_relationships(text,local_entities,global_entities, local_labels, global_
 
 
 	return relationships
-
-
-
-def get_relation_info(relationships):
-	"""
-	A dictionary of dictionaries of named entities!
-	The data structure returned by this is used as follows
-
-	info[relation.kind] returns a dictionary of all relationships 
-						that are of kind relation.kind
-
-	info[relation.kind][subject_entity] returns a list of all entities that share
-										a relationship of kind relation.kind with
-										subject_entity
-
-	INPUT: Dict<(Named_Entity, Named_Entity),Relationship>
-	OUTPUT: Dict<  
-				Relationship.Kind,  
-				Dict< Named_Entity.name,
-					  List<Named_Entity.name>  
-					 >   
-				>
-
-	"""
-	info = dict()
-	for relation in relationships.values():
-		if(relation.kind not in info.keys()):
-			info[relation.kind] = [relation]
-		else:
-			info[relation.kind].append(relation)
-
-	for kind in info.keys():
-		temp = dict()
-		for relation in info[kind]:
-			if(relation.entity1==relation.entity2):
-				continue
-			if(relation.entity1 not in temp):
-				temp[relation.entity1.name] = [relation.entity2.name]
-			else:
-				temp[relation.entity1.name].append(relation.entity2.name)
-		info[kind] = temp
-
-	return info
-
-
 
 def answer_questions(article_text, questions):
 	"""
@@ -172,18 +132,14 @@ def answer_questions(article_text, questions):
 	OUTPUT: prints answers to STDOUT
 	"""
 
-	#Build up knowledge base from document
 	article_entities = list(ner.extract_ne(article_text).values())
 	article_entities = sorted(article_entities,key=ner.get_key)
 
-	answers = []
 	for question in questions:
-
-		global_labels = []
-		local_labels = []
 
 		#Replacing Wh-words with a representative dummy entity to improve OpenNRE performance
 		#Also sets grammatically appropriate label(s) for the object of the question
+		global_labels = []
 		for wh_word in ["who",'Who']:
 			if wh_word in question.split():
 				question = question.replace(wh_word,'ALEX')
@@ -216,55 +172,73 @@ def answer_questions(article_text, questions):
 
 		question = question.replace("'s","")
 
+		
+
 		#extract named entities and determine the subject
 		question_entities = list(ner.extract_ne(question).values())
 		question_entities = sorted(question_entities,key=ner.get_key)
-
-		#Determine grammatically appropriate label(s) for the subject of the question
-		for question_entity in question_entities:
-			if question_entity.name in ['ALEX','GIZMO','MONROEVILLE','1945','AMOUNT']:
-				continue
-			else:
-				local_labels = [question_entity.label]
 
 		if(question==""):
 			continue
 
 		if(len(question_entities)==0):
-			print("Could not answer question. (Subject unclear)")
+			print("Could not answer question")
 			continue
+
+		isBinary = (question[0:2]=="Is" or question[0:3]=="Was" or question[0:3]=="Are")
+
+
+		
 
 		#find relationships between question_entities in question
-		question_relationships = get_relationships(question, question_entities, question_entities, RELATION_KINDS, RELATION_KINDS)
+		question_relationships = get_relationships(question, question_entities, question_entities)
+
+
 		if(len(question_relationships)==0):
-			print("Could not answer question. (Relation unclear)")
+			print("Could not answer question")
 			continue
 
-		#find relationships between entities in question_text and article_text
-		article_relationships = get_relationships(article_text, question_entities+article_entities, article_entities, local_labels, global_labels)
-		relation_info = get_relation_info(article_relationships)
+		#find all instances of the question_entities in the text 
+		q_ent_instances = set()
+		for q_ent in question_entities:
+			if q_ent.name in DUMMY_ENTITIES:
+				continue
+			startChars = [m.start() for m in re.finditer(q_ent.name, article_text)]
+			for startChar in startChars:
+				q_ent_instances.add(ner.Named_Entity(q_ent.name, True, startChar, startChar+len(q_ent.name), q_ent.label))
 
+		#examine all relations of question_entities within the text (within a window defined by RE_GRANULARITY)
+		best_relationship = Relationship(None,None,"No Kind",0.0)
+		for q in q_ent_instances:
+			text_startChar = max(q.start_char-RE_GRANULARITY,0)
+			text_endChar = min(q.end_char+RE_GRANULARITY,len(article_text))
+			text_excerpt = article_text[text_startChar:text_endChar]
+			a_ent_instances = ner.extract_ne(text_excerpt).values()
 
-		#try to find the relationships in question to the knowledge base
-		answer_is_found = False
-		answer=""
-		for topic in question_relationships.values():
-			if(answer_is_found):
-				break
-			if(topic.kind in relation_info.keys()):
-				if(topic.entity1.name in relation_info[topic.kind].keys()):
-					answer = relation_info[topic.kind][topic.entity1.name][0]
-					answer_is_found = True
-				elif(topic.entity2.name in relation_info[topic.kind].keys()):
-					answer = relation_info[topic.kind][topic.entity2.name][0]
-					answer_is_found = True
-		if(answer_is_found):
-			print(answer)
+			answer_relationships = get_relationships(article_text, [q], a_ent_instances).values()
+			
+			for a_rel in answer_relationships:
+				is_answer = False
+				for q_rel in question_relationships.values():
+					is_answer = (q_rel.kind==a_rel.kind and \
+								 (a_rel.entity1.name in q_rel.get_entityNames()))
+				if is_answer and a_rel.score>best_relationship.score:
+					best_relationship = a_rel
+				if best_relationship.score==0.0 and a_rel.entity2.label in global_labels:
+					best_relationship = a_rel
+					best_relationship.score = 0.01
+
+		#Answers if a relevant relationship can be found
+		if(best_relationship.score>0.0):
+			if(isBinary):
+				print("Yes")
+			else:
+				print(best_relationship.entity2.name.replace("\n",""))
 		else:
-
-			print("Could not answer question. (Answer not found)")
-
-
+			if(isBinary):
+				print("No")
+			else:
+				print("Could not answer question")
 
 
 
