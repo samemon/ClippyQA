@@ -1,0 +1,134 @@
+{
+	"head of government" : "['head of government', 'position held', 'member of political party']",
+
+	"position held" : "['head of government', 'position held', 'member of political party']",
+
+	"member of political party" : "['head of government', 'position held', 'member of political party']",
+
+	"country" : "['country', 'country of citizenship', 'located in the administrative territory', 'contains administrative territorial entity', 'headquarters location', 'country of origin', 'residence', 'located on terrain feature', 'location of formation', 'place served by transport hub', 'work location', 'heritage designation']",
+
+	"country of citizenship" : "['country', 'country of citizenship', 'located in the administrative territory', 'contains administrative territorial entity', 'headquarters location', 'country of origin', 'residence', 'located on terrain feature', 'location of formation', 'place served by transport hub', 'work location', 'heritage designation']",
+
+	"located in the administrative territory" : "['country', 'country of citizenship', 'located in the administrative territory', 'contains administrative territorial entity', 'headquarters location', 'country of origin', 'residence', 'located on terrain feature', 'location of formation', 'place served by transport hub', 'work location', 'heritage designation']",
+
+	"contains administrative territorial entity" : "['country', 'country of citizenship', 'located in the administrative territory', 'contains administrative territorial entity', 'headquarters location', 'country of origin', 'residence', 'located on terrain feature', 'location of formation', 'place served by transport hub', 'work location', 'heritage designation']",
+
+	"headquarters location" : "['country', 'country of citizenship', 'located in the administrative territory', 'contains administrative territorial entity', 'headquarters location', 'country of origin', 'residence', 'located on terrain feature', 'location of formation', 'place served by transport hub', 'work location', 'heritage designation']",
+
+	"country of origin" : "['country', 'country of citizenship', 'located in the administrative territory', 'contains administrative territorial entity', 'headquarters location', 'country of origin', 'residence', 'located on terrain feature', 'location of formation', 'place served by transport hub', 'work location', 'heritage designation']",
+
+	"residence" : "['country', 'country of citizenship', 'located in the administrative territory', 'contains administrative territorial entity', 'headquarters location', 'country of origin', 'residence', 'located on terrain feature', 'location of formation', 'place served by transport hub', 'work location', 'heritage designation']",
+
+	"located on terrain feature" : "['country', 'country of citizenship', 'located in the administrative territory', 'contains administrative territorial entity', 'headquarters location', 'country of origin', 'residence', 'located on terrain feature', 'location of formation', 'place served by transport hub', 'work location', 'heritage designation']",
+
+	"country of origin', 'residence', 'located on terrain feature" : "['country', 'country of citizenship', 'located in the administrative territory', 'contains administrative territorial entity', 'headquarters location', 'country of origin', 'residence', 'located on terrain feature', 'location of formation', 'place served by transport hub', 'work location', 'heritage designation']",
+
+	"place served by transport hub" : "['country', 'country of citizenship', 'located in the administrative territory', 'contains administrative territorial entity', 'headquarters location', 'country of origin', 'residence', 'located on terrain feature', 'location of formation', 'place served by transport hub', 'work location', 'heritage designation']",
+
+	"work location" : "['country', 'country of citizenship', 'located in the administrative territory', 'contains administrative territorial entity', 'headquarters location', 'country of origin', 'residence', 'located on terrain feature', 'location of formation', 'place served by transport hub', 'work location', 'heritage designation']",
+
+	"heritage designation" : "['country', 'country of citizenship', 'located in the administrative territory', 'contains administrative territorial entity', 'headquarters location', 'country of origin', 'residence', 'located on terrain feature', 'location of formation', 'place served by transport hub', 'work location', 'heritage designation']",
+
+
+
+	"father" : "['father', 'sibling','mother','spouse','child']",
+
+	"sibling" : "['father', 'sibling','mother','spouse','child']",
+
+	"mother" : "['father', 'sibling','mother','spouse','child']",
+
+	"spouse" : "['father', 'sibling','mother','spouse','child']",
+
+	"child" : "['father', 'sibling','mother','spouse','child']",
+
+
+	"director"  : "['director', 'screenwriter', 'architect', 'composer', 'publisher', 'owned by', 'operator, 'performer', 'manufacturer', 'field of work', 'occupation']",
+
+	"screenwriter"  : "['director', 'screenwriter', 'architect', 'composer', 'publisher', 'owned by', 'operator, 'performer', 'manufacturer', 'field of work', 'occupation']",
+
+	"architect"  : "['director', 'screenwriter', 'architect', 'composer', 'publisher', 'owned by', 'operator, 'performer', 'manufacturer', 'field of work', 'occupation']",
+
+	"composer"  : "['director', 'screenwriter', 'architect', 'composer', 'publisher', 'owned by', 'operator, 'performer', 'manufacturer', 'field of work', 'occupation']",
+	
+	"publisher"  : "['director', 'screenwriter', 'architect', 'composer', 'publisher', 'owned by', 'operator, 'performer', 'manufacturer', 'field of work', 'occupation']",
+
+	"owned by"  : "['director', 'screenwriter', 'architect', 'composer', 'publisher', 'owned by', 'operator, 'performer', 'manufacturer', 'field of work', 'occupation']",
+
+	"operator"  : "['director', 'screenwriter', 'architect', 'composer', 'publisher', 'owned by', 'operator, 'performer', 'manufacturer', 'field of work', 'occupation']",
+
+	"performer"  : "['director', 'screenwriter', 'architect', 'composer', 'publisher', 'owned by', 'operator, 'performer', 'manufacturer', 'field of work', 'occupation']",
+
+	"manufacturer"  : "['director', 'screenwriter', 'architect', 'composer', 'publisher', 'owned by', 'operator, 'performer', 'manufacturer', 'field of work', 'occupation']",
+
+	"field of work"  : "['has' part', 'part of', 'director', 'screenwriter', 'architect', 'composer', 'publisher', 'owned by', 'operator, 'performer', 'manufacturer', 'field of work', 'occupation']",
+
+	"occupation"  : "['director', 'screenwriter', 'architect', 'composer', 'publisher', 'owned by', 'operator, 'performer', 'manufacturer', 'field of work', 'occupation']",
+
+	"has part"  : "['director', 'screenwriter', 'architect', 'composer', 'publisher', 'owned by', 'operator, 'performer', 'manufacturer', 'field of work', 'occupation']",
+
+	"performer"  : "['director', 'screenwriter', 'architect', 'composer', 'publisher', 'owned by', 'operator, 'performer', 'manufacturer', 'field of work', 'occupation']",
+
+	"platform" : "['platform, 'record label, 'original network, 'distributor, 'licensed to broadcast to']",
+
+	"record label" : "['platform, 'record label, 'original network, 'distributor, 'licensed to broadcast to']",
+
+	"licensed to broadcast to" : "['platform, 'record label, 'original network, 'distributor, 'licensed to broadcast to']",
+
+	"original network" : "['platform, 'record label, 'original network, 'distributor, 'licensed to broadcast to']",
+
+	"distributor" : "['platform, 'record label, 'original network, 'distributor, 'licensed to broadcast to']",
+
+	"part of"  : "['director', 'screenwriter', 'architect', 'composer', 'publisher', 'owned by', 'operator, 'performer', 'manufacturer', 'field of work', 'occupation']",
+
+
+	"notable work"  : "['notable work', 'developer']",
+
+	"developer"  : "['notable work', 'developer']",
+
+
+	"movement" : "['movement, 'genre']",
+
+	"genre" : "['movement, 'genre']",
+
+
+	"league" : "['league, 'participating teams']",
+
+	"participating teams" : "['league, 'participating teams']",
+
+
+	"religion" : "['religion']",
+
+
+	"subsidiary" : "['subsidiary']",
+
+
+	"mouth of the watercourse" : "['mouth of the watercourse', 'tributary', 'crosses', 'located in or next to body of water']",
+
+	"tributary" : "['mouth of the watercourse', 'tributary', 'crosses', 'located in or next to body of water']",
+
+	"crosses" : "['mouth of the watercourse', 'tributary', 'crosses', 'located in or next to body of water']",
+
+	"located in or next to body of water" : "['mouth of the watercourse', 'tributary', 'crosses', 'located in or next to body of water']",
+
+
+	"language of work or name" : "['language of work or name', 'original language of work']",
+
+	"original language of work" : "['language of work or name', 'original language of work']",
+
+
+	"occupant" : "['occupant', 'participant', 'participant of']",
+
+	"participant" : "['occupant', 'participant', 'participant of']",
+
+	"participant of" : "['occupant', 'participant', 'participant of']",
+
+
+	"successful candidate" : "['successful candidate', 'winner', 'nominated for']",
+
+	"winner" : "['successful candidate', 'winner', 'nominated for']",
+
+	"nominated for" : "['successful candidate', 'winner', 'nominated for']",
+
+
+	"instrument" : "['instrument']"
+}
