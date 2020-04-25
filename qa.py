@@ -11,9 +11,10 @@ from relation_extraction import nre_qg
 from dependency_parsing import dp
 
 
-#Stores wh- and binary patterns for relation-based questions
-RE_QG_JSON = open("resources/re_qg.json","r").read()
-RE_RULES = json.loads(RE_QG_JSON)
+#Stores similarities between relation types
+RELATION_CLASSES = open("resources/equivalent_labels.json","r").read()
+EQ_CLASSES = json.loads(RELATION_CLASSES)
+
 RELATION_KINDS = ['PERSON','NORP','FAC','ORG','GPE','LOC','PRODUCT','EVENT','WORK_OF_ART','LAW',\
 				  'LANGUAGE','DATE','TIME','PERCENT','MONEY','QUANITY','ORDINAL','CARDINAL']
 DUMMY_ENTITIES = ['ALEX','GIZMO','MONROEVILLE','1945','AMOUNT']
@@ -24,7 +25,7 @@ DP_RULES = json.loads(DP_QG_JSON)
 
 #Controls how far RE goes to detect relationships for each named entity
 #Increasing may lead to more relationships at the cost of increased runtime 
-RE_GRANULARITY = 1000
+RE_GRANULARITY = 250
 
 
 
@@ -123,20 +124,8 @@ def get_relationships(text,local_entities,global_entities):
 
 	return relationships
 
-def answer_questions(article_text, questions):
-	"""
-	Takes the text from the article as well as list of questions in string form
-	and returns a list of answers corresponding to each question
-
-	INPUT: String, List<String>
-	OUTPUT: prints answers to STDOUT
-	"""
-
-	article_entities = list(ner.extract_ne(article_text).values())
-	article_entities = sorted(article_entities,key=ner.get_key)
-
-	for question in questions:
-
+def replace_dummy_entities(question):
+	global_labels = []
 		#Replacing Wh-words with a representative dummy entity to improve OpenNRE performance
 		#Also sets grammatically appropriate label(s) for the object of the question
 		global_labels = []
@@ -171,8 +160,25 @@ def answer_questions(article_text, questions):
 				global_labels = ['PERCENT','MONEY','QUANITY','CARDINAL']
 
 		question = question.replace("'s","")
+		return (question, global_labels)
 
-		
+def answer_questions_with_nre(article_text, questions):
+	"""
+	Takes the text from the article as well as list of questions in string form
+	and returns a list of answers corresponding to each question
+
+	INPUT: String, List<String>
+	OUTPUT: prints answers to STDOUT
+	"""
+
+	article_entities = list(ner.extract_ne(article_text).values())
+	article_entities = sorted(article_entities,key=ner.get_key)
+
+	for question in questions:
+
+		#Replacing Wh-words with a representative dummy entity to improve OpenNRE performance
+		#Also sets grammatically appropriate label(s) for the object of the question
+		global_labels, question = replace_dummy_entities(question)
 
 		#extract named entities and determine the subject
 		question_entities = list(ner.extract_ne(question).values())
@@ -186,9 +192,6 @@ def answer_questions(article_text, questions):
 			continue
 
 		isBinary = (question[0:2]=="Is" or question[0:3]=="Was" or question[0:3]=="Are")
-
-
-		
 
 		#find relationships between question_entities in question
 		question_relationships = get_relationships(question, question_entities, question_entities)
@@ -209,6 +212,7 @@ def answer_questions(article_text, questions):
 
 		#examine all relations of question_entities within the text (within a window defined by RE_GRANULARITY)
 		best_relationship = Relationship(None,None,"No Kind",0.0)
+		guess_relationship = Relationship(None,None,"No Kind",0.0)
 		for q in q_ent_instances:
 			text_startChar = max(q.start_char-RE_GRANULARITY,0)
 			text_endChar = min(q.end_char+RE_GRANULARITY,len(article_text))
@@ -219,14 +223,21 @@ def answer_questions(article_text, questions):
 			
 			for a_rel in answer_relationships:
 				is_answer = False
+				is_guess = False
 				for q_rel in question_relationships.values():
 					is_answer = (q_rel.kind==a_rel.kind and \
 								 (a_rel.entity1.name in q_rel.get_entityNames()))
+					is_guess = (q_rel.kind in EQ_CLASSES.keys() and a_rel.kind in EQ_CLASSES[q_rel.kind] and \
+								a_rel.entity1.name in q_rel.get_entityNames())
 				if is_answer and a_rel.score>best_relationship.score:
 					best_relationship = a_rel
 				if best_relationship.score==0.0 and a_rel.entity2.label in global_labels:
 					best_relationship = a_rel
 					best_relationship.score = 0.01
+
+				if is_guess and a_rel.score>guess_relationship.score:
+					guess_relationship = a_rel
+
 
 		#Answers if a relevant relationship can be found
 		if(best_relationship.score>0.0):
@@ -234,6 +245,12 @@ def answer_questions(article_text, questions):
 				print("Yes")
 			else:
 				print(best_relationship.entity2.name.replace("\n",""))
+		elif(guess_relationship.score>0.0):
+			if(isBinary):
+				print("Yes")
+			else:
+				print(guess_relationship.entity2.name.replace("\n",""))
+
 		else:
 			if(isBinary):
 				print("No")
@@ -273,6 +290,9 @@ def load_files():
 
 
 
+
+
+
 def main():
     (article_text, question_text) = load_files()
     questions = question_text.split('\n')
@@ -280,7 +300,7 @@ def main():
     # A draft way to split articles - still doesn't work on non-ASCII punctuation.
     r = re.compile(r'(\.|\n)')
 
-    answers = answer_questions(article_text,questions)
+    answers = answer_questions_with_nre(article_text,questions)
     #write_answers(answers)
     
 

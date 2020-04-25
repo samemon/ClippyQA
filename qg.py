@@ -21,8 +21,7 @@ DP_RULES = json.loads(DP_QG_JSON)
 
 #Controls how far RE goes to detect relationships for each named entity
 #Increasing may lead to more relationships at the cost of increased runtime 
-RE_GRANULARITY = 5
-
+RE_GRANULARITY = 2
 #What portion of the generated questions should be binary?
 BINARY_RATIO = 2/7
 
@@ -189,21 +188,11 @@ def dependency_to_question(entities):
 
 
 
-
-
-
-
-
-
-def main(_filepath, _N):
-	f = open(_filepath, "r")
-	text = f.read()
-
+def generate_question_by_nre(text,question_limit):
 	entities = ner.extract_ne(text)
 	entities = sorted(list(entities.values()),key=ner.get_key)
 
 	ne_count = len(entities)
-	question_limit = int(_N)
 
 	question_topics = {}
 	question_count = 0
@@ -239,11 +228,7 @@ def main(_filepath, _N):
 							, entity2.end_char)
 
 			if(_score>best_relationship.score):
-				best_relationship.entity1 = entity1
-				best_relationship.entity2 = entity2
-				best_relationship.kind = _kind
-				best_relationship.score = _score
-				#best_relationship = Relationship(entity1,entity2,_kind,_score)
+				best_relationship = Relationship(entity1,entity2,_kind,_score)
 		
 		if(best_relationship.score>0.0):
 			question = relationship_to_question(best_relationship)
@@ -270,7 +255,7 @@ if __name__ == "__main__":
 	if(len(argv)!=2):
 		print("Usage: <text you want to generate questions from> <number of questions> ")
 		sys.exit()
-	main(argv[0], argv[1])
+	generate_question_by_nre(open(argv[0],"r").read(), int(argv[1]))
 """________________________________________________________________________"""
 
 
