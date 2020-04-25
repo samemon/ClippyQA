@@ -4,20 +4,31 @@ import json
 import re
 
 import nltk
+from nltk.tokenize import word_tokenize, sent_tokenize
+import numpy as np
+import gensim
 
-#from coref_resolution import coref
 from ne_extraction import ner
 from relation_extraction import nre_qg
 from dependency_parsing import dp
 
+from gensim import corpora, models, similarities
 
 #Stores similarities between relation types
 RELATION_CLASSES = open("resources/equivalent_labels.json","r").read()
 EQ_CLASSES = json.loads(RELATION_CLASSES)
 
+#Stores wh- and binary patterns for relation-based questions
+RE_QG_JSON = open("resources/re_qg.json","r").read()
+RE_RULES = json.loads(RE_QG_JSON)
+
 RELATION_KINDS = ['PERSON','NORP','FAC','ORG','GPE','LOC','PRODUCT','EVENT','WORK_OF_ART','LAW',\
 				  'LANGUAGE','DATE','TIME','PERCENT','MONEY','QUANITY','ORDINAL','CARDINAL']
+
 DUMMY_ENTITIES = ['ALEX','GIZMO','MONROEVILLE','1945','AMOUNT']
+
+AUXILLARY_VERBS = ['Are', 'Is', 'Was', 'Were', 'Being', 'Been', 'Can', 'Could', 'Do' 'Does', 'Did', 'Have', 'Has', 'Had', 'Will', 'Would.',\
+				   'are', 'is', 'was', 'were', 'being', 'been', 'can', 'could', 'do' 'does', 'did', 'have', 'has', 'had', 'will', 'would.']
 
 #Stores patterns for dependency-parse based questions
 DP_QG_JSON = open("resources/dp_qg.json","r").read()
@@ -25,7 +36,7 @@ DP_RULES = json.loads(DP_QG_JSON)
 
 #Controls how far RE goes to detect relationships for each named entity
 #Increasing may lead to more relationships at the cost of increased runtime 
-RE_GRANULARITY = 250
+RE_GRANULARITY = 20
 
 
 
@@ -96,6 +107,46 @@ class Question:
 
 
 
+def return_similar(article_text, question, N):
+    file_docs = []
+
+    tokens = sent_tokenize(article_text)
+    for line in tokens:
+        file_docs.append(line)
+
+    gen_docs = [[w.lower() for w in word_tokenize(text)] 
+            for text in file_docs]
+
+    dictionary = gensim.corpora.Dictionary(gen_docs)
+    corpus = [dictionary.doc2bow(gen_doc) for gen_doc in gen_docs]
+    
+    tf_idf = gensim.models.TfidfModel(corpus)
+
+    sims = gensim.similarities.Similarity('workdir_sims/',tf_idf[corpus],
+                                        num_features=len(dictionary))
+
+    query_doc = [w.lower() for w in word_tokenize(question)]
+    query_doc_bow = dictionary.doc2bow(query_doc)
+    
+    
+    query_doc_tf_idf = tf_idf[query_doc_bow]
+    # print(document_number, document_similarity)
+    similarity = sims[query_doc_tf_idf]
+    top_N = similarity.argsort()[-N:][::-1]
+
+    results = []
+    for i in top_N:
+    	results.append(file_docs[i])
+
+    return results
+
+    #print('Comparing Result:', sims[query_doc_tf_idf])
+
+
+
+#memoize discovered relationships 
+RELATION_DICT = dict()
+
 
 def get_relationships(text,local_entities,global_entities):
 	"""
@@ -110,57 +161,84 @@ def get_relationships(text,local_entities,global_entities):
 
 	for entity1 in local_entities:
 		for entity2 in global_entities:
+			if (entity1.name,entity2.name) in RELATION_DICT.keys():
+				relationships[(entity1.name,entity2.name)] = RELATION_DICT[(entity1.name,entity2.name)]
+				continue
+
 			text_startChar = min(entity1.start_char, entity2.start_char)
 			text_endChar = max(entity1.end_char, entity2.end_char)
 			text_excerpt = text[text_startChar:text_endChar]
 			if(entity1.name==entity2.name):
 				continue
-			(_kind, _score) = nre_qg.infer(text_excerpt, entity1.start_char \
+
+			(_kind, _score) = nre_qg.infer(text, entity1.start_char \
 							, entity1.end_char, entity2.start_char \
 							, entity2.end_char)
+
+			if _kind in RE_RULES.keys():
+				if(entity1.label not in RE_RULES[_kind]["entity1_labels"]):
+					_score = 0.0
+				if(entity2.label not in RE_RULES[_kind]["entity2_labels"]):
+					_score = 0.0
+			else:
+				_score = 0.0
+
 			relationships[(entity1.name,entity2.name)] = \
 						Relationship(entity1, entity2, _kind, _score) 
+
+			RELATION_DICT[(entity1.name,entity2.name)] = relationships[(entity1.name,entity2.name)]
+
+
+
+			#print(relationships[(entity1.name,entity2.name)])
 
 
 	return relationships
 
 def replace_dummy_entities(question):
-	global_labels = []
 		#Replacing Wh-words with a representative dummy entity to improve OpenNRE performance
 		#Also sets grammatically appropriate label(s) for the object of the question
-		global_labels = []
-		for wh_word in ["who",'Who']:
-			if wh_word in question.split():
-				question = question.replace(wh_word,'ALEX')
-				global_labels = ['PERSON']
+	global_labels = []
+	for wh_word in ["who",'Who']:
+		if wh_word in question.split():
+			question = question.replace(wh_word,'ALEX')
+			global_labels = ['PERSON']
 
-		for wh_word in ["what",'What']:
-			if wh_word in question.split():
-				question = question.replace(wh_word,'GIZMO')
-				global_labels = ['PRODUCT','WORK_OF_ART','LAW']
+	for wh_word in ["what",'What']:
+		if wh_word in question.split():
+			question = question.replace(wh_word,'GIZMO')
+			global_labels = ['PRODUCT','WORK_OF_ART','LAW']
 
-		for wh_word in ["where",'Where']:
-			if wh_word in question.split():
-				question = question.replace(wh_word,'MONROEVILLE')
-				global_labels = ['FAC','LOC','GPE']
+	for wh_word in ["where",'Where']:
+		if wh_word in question.split():
+			question = question.replace(wh_word,'MONROEVILLE')
+			global_labels = ['FAC','LOC','GPE']
 
-		for wh_word in ["when",'When']:
-			if wh_word in question.split():
-				question = question.replace(wh_word,'1945')
-				global_labels = ['TIME','DATE','EVENT']
+	for wh_word in ["when",'When']:
+		if wh_word in question.split():
+			question = question.replace(wh_word,'1945')
+			global_labels = ['TIME','DATE','EVENT']
 
-		for wh_word in ["whom",'Whom']:
-			if wh_word in question.split():
-				question = question.replace(wh_word,'ALEX')
-				global_labels = ['PERSON','ORG']
-			
-		for wh_word in ["how much",'How much']:
-			if wh_word in question.split():
-				question = question.replace(wh_word,'AMOUNT')
-				global_labels = ['PERCENT','MONEY','QUANITY','CARDINAL']
+	for wh_word in ["whom",'Whom']:
+		if wh_word in question.split():
+			question = question.replace(wh_word,'ALEX')
+			global_labels = ['PERSON','ORG']
+		
+	for wh_word in ["how much",'How much']:
+		if wh_word in question.split():
+			question = question.replace(wh_word,'AMOUNT')
+			global_labels = ['PERCENT','MONEY','QUANITY','CARDINAL']
+
+	for wh_word in ["how many",'How many']:
+		if wh_word in question.split():
+			question = question.replace(wh_word,'AMOUNT')
+			global_labels = ['PERCENT','MONEY','QUANITY','CARDINAL']
 
 		question = question.replace("'s","")
 		return (question, global_labels)
+
+
+
 
 def answer_questions_with_nre(article_text, questions):
 	"""
@@ -170,73 +248,69 @@ def answer_questions_with_nre(article_text, questions):
 	INPUT: String, List<String>
 	OUTPUT: prints answers to STDOUT
 	"""
-
-	article_entities = list(ner.extract_ne(article_text).values())
-	article_entities = sorted(article_entities,key=ner.get_key)
-
 	for question in questions:
 
-		#Replacing Wh-words with a representative dummy entity to improve OpenNRE performance
-		#Also sets grammatically appropriate label(s) for the object of the question
-		global_labels, question = replace_dummy_entities(question)
+		isBinary = question.split(" ")[0] in AUXILLARY_VERBS
+
+		#get relevant texts to search from
+		passages = return_similar(article_text,question,RE_GRANULARITY)
+
+		#replace wh- words with dummy enitities
+		(question, global_labels) = replace_dummy_entities(question)
 
 		#extract named entities and determine the subject
 		question_entities = list(ner.extract_ne(question).values())
-		question_entities = sorted(question_entities,key=ner.get_key)
 
+		#ignore blank questions
 		if(question==""):
 			continue
 
-		if(len(question_entities)==0):
-			print("Could not answer question")
-			continue
-
-		isBinary = (question[0:2]=="Is" or question[0:3]=="Was" or question[0:3]=="Are")
-
+		
 		#find relationships between question_entities in question
-		question_relationships = get_relationships(question, question_entities, question_entities)
+		question_relationships = get_relationships(question, question_entities, question_entities).values()
+		question_entities = [i for i in question_entities if i.name not in DUMMY_ENTITIES] 
 
-
-		if(len(question_relationships)==0):
+		if(len(passages)==0): #no passages found similar to question
 			print("Could not answer question")
 			continue
+		elif(len(question_entities)==0): #no subject found in question
+			print(passages[0])
+			continue
+		elif(len(question_relationships)==0): #no topic found in question
+			print(passages[0])
+			continue
+		
 
-		#find all instances of the question_entities in the text 
-		q_ent_instances = set()
-		for q_ent in question_entities:
-			if q_ent.name in DUMMY_ENTITIES:
-				continue
-			startChars = [m.start() for m in re.finditer(q_ent.name, article_text)]
-			for startChar in startChars:
-				q_ent_instances.add(ner.Named_Entity(q_ent.name, True, startChar, startChar+len(q_ent.name), q_ent.label))
 
-		#examine all relations of question_entities within the text (within a window defined by RE_GRANULARITY)
+		#get kinds of relationships found in the questions
+		question_relationship_kinds = []
+		for q_rel in question_relationships:
+			question_relationship_kinds.append(q_rel.kind)
+
+		#get similar relationships to ones above
+		similar_relationship_kinds = []
+		for kind in question_relationship_kinds:
+			if kind in EQ_CLASSES.keys():
+				similar_relationship_kinds += EQ_CLASSES[kind]
+
+
 		best_relationship = Relationship(None,None,"No Kind",0.0)
 		guess_relationship = Relationship(None,None,"No Kind",0.0)
-		for q in q_ent_instances:
-			text_startChar = max(q.start_char-RE_GRANULARITY,0)
-			text_endChar = min(q.end_char+RE_GRANULARITY,len(article_text))
-			text_excerpt = article_text[text_startChar:text_endChar]
-			a_ent_instances = ner.extract_ne(text_excerpt).values()
+		best_passage = passages[0]
+		for passage in passages:
+			#print(passage)
+			passage_entities = list(ner.extract_ne(passage).values())
+			passage_relationships = get_relationships(passage, passage_entities+question_entities, passage_entities).values()
+			for p_rel in passage_relationships:
+				if(p_rel.entity2 in question_entities):
+					continue
+				if p_rel.kind in question_relationship_kinds and p_rel.score>best_relationship.score:
+					best_relationship = p_rel
+				if p_rel.kind in similar_relationship_kinds and p_rel.score>guess_relationship.score:
+					guess_relationship = p_rel
+				if p_rel.kind in global_labels:
+					best_passage = passage
 
-			answer_relationships = get_relationships(article_text, [q], a_ent_instances).values()
-			
-			for a_rel in answer_relationships:
-				is_answer = False
-				is_guess = False
-				for q_rel in question_relationships.values():
-					is_answer = (q_rel.kind==a_rel.kind and \
-								 (a_rel.entity1.name in q_rel.get_entityNames()))
-					is_guess = (q_rel.kind in EQ_CLASSES.keys() and a_rel.kind in EQ_CLASSES[q_rel.kind] and \
-								a_rel.entity1.name in q_rel.get_entityNames())
-				if is_answer and a_rel.score>best_relationship.score:
-					best_relationship = a_rel
-				if best_relationship.score==0.0 and a_rel.entity2.label in global_labels:
-					best_relationship = a_rel
-					best_relationship.score = 0.01
-
-				if is_guess and a_rel.score>guess_relationship.score:
-					guess_relationship = a_rel
 
 
 		#Answers if a relevant relationship can be found
@@ -247,15 +321,15 @@ def answer_questions_with_nre(article_text, questions):
 				print(best_relationship.entity2.name.replace("\n",""))
 		elif(guess_relationship.score>0.0):
 			if(isBinary):
-				print("Yes")
+				print("Yes",guess_relationship.score)
 			else:
 				print(guess_relationship.entity2.name.replace("\n",""))
-
 		else:
 			if(isBinary):
 				print("No")
 			else:
-				print("Could not answer question")
+				print(best_passage)
+
 
 
 
