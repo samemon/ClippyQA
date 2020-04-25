@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import sys
 import heapq
 import json
@@ -274,13 +275,13 @@ def answer_questions_with_nre(article_text, questions):
 			print("Could not answer question")
 			continue
 		elif(len(question_entities)==0): #no subject found in question
-			print(passages[0])
+			print(" ".join(passages[0].split()))
 			continue
 		elif(len(question_relationships)==0): #no topic found in question
-			print(passages[0])
+			print(" ".join(passages[0].split()))
 			continue
 		
-
+		best_passage = passages[0]
 
 		#get kinds of relationships found in the questions
 		question_relationship_kinds = []
@@ -296,7 +297,7 @@ def answer_questions_with_nre(article_text, questions):
 
 		best_relationship = Relationship(None,None,"No Kind",0.0)
 		guess_relationship = Relationship(None,None,"No Kind",0.0)
-		best_passage = passages[0]
+		
 		for passage in passages:
 			#print(passage)
 			passage_entities = list(ner.extract_ne(passage).values())
@@ -318,17 +319,17 @@ def answer_questions_with_nre(article_text, questions):
 			if(isBinary):
 				print("Yes")
 			else:
-				print(best_relationship.entity2.name.replace("\n",""))
+				print(" ".join(best_relationship.entity2.name.split()))
 		elif(guess_relationship.score>0.0):
 			if(isBinary):
-				print("Yes",guess_relationship.score)
+				print("Yes")
 			else:
-				print(guess_relationship.entity2.name.replace("\n",""))
+				print(" ".join(guess_relationship.entity2.name.split()))
 		else:
 			if(isBinary):
 				print("No")
 			else:
-				print(best_passage)
+				print(" ".join(best_passage.split()))
 
 
 
