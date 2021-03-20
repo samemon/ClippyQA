@@ -9,9 +9,17 @@ Given an article/text, the system generates questions based on *relationships* b
 The question generation happens in two phases: (i) Using Named-Entity recognition (NRE-QG), and (ii) Using constituency parsing (PARSE-QG). The questions generated are then weighted and ranked using several criteria. The system diagrams for each of the two question generators are as follows:
 
 ## NRE-QG
+
+For NRE-QG system, we:
+- Extract main named entity in passage
+- Extract named entities within distance granularity
+- Check relations between main entity and surrounding
+- Convert most accurate relation to questions (Wh- or Binary)
+
 ![NRE-QG](https://github.com/samemon/ClippyQA/blob/master/images/qg_nre.png?raw=true)
 
 ## PARSE-QG
+The PARSE-QG system is explained in the diagram below:
 
 ![PARSE-QG](https://github.com/samemon/ClippyQA/blob/master/images/qg_cp.png?raw=true)
 
