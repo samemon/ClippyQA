@@ -4,16 +4,16 @@ This repository is an implementation of a Question Generation (QG) and Question 
 # Question Generation (QG)
 Given an article/text, the system generates questions based on *relationships* between entities. The system diagram for the question generation system is below:
 
-![QG](https://github.com/samemon/ClippyQA/blob/master/images/qg_overall?raw=true)
+![QG](https://github.com/samemon/ClippyQA/blob/master/images/qg_overall.png?raw=true)
 
 The question generation happens in two phases: (i) Using Named-Entity recognition (NRE-QG), and (ii) Using constituency parsing (PARSE-QG). The questions generated are then weighted and ranked using several criteria. The system diagrams for each of the two question generators are as follows:
 
 ## NRE-QG
-![NRE-QG](https://github.com/samemon/ClippyQA/blob/master/images/qg_nre?raw=true)
+![NRE-QG](https://github.com/samemon/ClippyQA/blob/master/images/qg_nre.png?raw=true)
 
 ## PARSE-QG
 
-![PARSE-QG](https://github.com/samemon/ClippyQA/blob/master/images/qg_cp?raw=true)
+![PARSE-QG](https://github.com/samemon/ClippyQA/blob/master/images/qg_cp.png?raw=true)
 
 ## Question Ranker
 
