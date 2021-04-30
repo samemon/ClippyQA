@@ -220,7 +220,7 @@ tqdm==4.41.1
 traitlets==4.3.3
 transformers==2.3.0
 unicodecsv==0.14.1
-urllib3==1.25.7
+urllib3==1.25.8
 virtualenv==20.0.5
 virtualenv-clone==0.5.3
 wasabi==0.6.0
